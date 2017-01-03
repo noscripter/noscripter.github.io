@@ -1,2 +1,1 @@
-# noscripter.github.io
-Keep it simple and stupid.
+Keep it simple and cool.
