@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" class=""><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="en">
+  <link rel="stylesheet" type="text/css" href="./css/github-syntax-highlight.css">
+  <link rel="stylesheet" type="text/css" href="./github-markdown.css">
+  <style>
+    .markdown-body {
+      min-width: 200px;
+      max-width: 790px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+  </style>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="repository-with-sidebar repo-container new-discussion-timeline with-full-navigation">
+        <div id="js-repo-pjax-container" class="repository-content context-loader-container">
+          <div id="readme" class="boxed-group flush clearfix announce instapaper_body md">
+            <article class="markdown-body"><h2>Git技巧</h2>
+<h3>如何回退到某一次提交？</h3>
+<ol>
+<li>本地回退到某次提交：</li>
+</ol>
+<p><code>git checkout xxx-commit-hash</code></p>
+<ol start="2">
+<li>远程分支回退到某次提交：</li>
+</ol>
+<p><code>git reset --hard xxx-commit-hash</code></p>
+<p>跟着上面的命令，先将工作目录回退到某次提交，然后执行下面的命令：
+git push -f origin xxx分支</p>
+<blockquote>
+<p>来源：
+<a href="https://stackoverflow.com/questions/5816688/reseting-remote-to-a-certain-commit">https://stackoverflow.com/questions/5816688/reseting-remote-to-a-certain-commit</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely">https://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely</a></p>
+</blockquote>
+<ol start="3">
+<li>修改上次提交的提交信息</li>
+</ol>
+<p><code>git commit --amend -m 'xxxx'</code>
+<code>git push remote branch --force</code>    或者  <code>git push remote branch -f</code></p>
+<blockquote>
+<p><a href="http://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git">http://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git</a></p>
+</blockquote>
+<ol start="4">
+<li>删除远程分支</li>
+</ol>
+<p><code>git push origin :&lt;branchName&gt;</code></p>
+<blockquote>
+<p><a href="http://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely">http://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely</a></p>
+</blockquote>
+<ol start="5">
+<li>比较两个不同分支上的相同文件的不同</li>
+</ol>
+<p><code>git diff branch1 branch2 xxx_file</code></p>
+<blockquote>
+<p><a href="http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches">http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a>
+<a href="http://stackoverflow.com/questions/255202/how-do-i-view-git-diff-output-with-visual-diff-program">http://stackoverflow.com/questions/255202/how-do-i-view-git-diff-output-with-visual-diff-program</a>
+<a href="http://stackoverflow.com/questions/9834689/comparing-two-branches-in-git">http://stackoverflow.com/questions/9834689/comparing-two-branches-in-git</a></p>
+</blockquote>
+<ol start="6">
+<li>查看两个分支有哪些文件做了修改</li>
+</ol>
+<p><code>git diff --name-status branch1 branch2</code>
+`git diff --stat --color branch1 branch2</p>
+<ol start="7">
+<li>查看当前库的所有远端版本</li>
+</ol>
+<p><code>git branch -ar</code>
+<code>git ls-remote</code>
+<code>git remote show origin</code></p>
+<blockquote>
+<p><a href="http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes">http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes</a>
+<a href="https://stackoverflow.com/questions/3471827/how-do-i-list-all-remote-branches-in-git-1-7">https://stackoverflow.com/questions/3471827/how-do-i-list-all-remote-branches-in-git-1-7</a></p>
+</blockquote>
+<p>有时候本地的远程信息没有同步，需要执行下面的命令同步：</p>
+<p><code>git remote update</code></p>
+<ol start="8">
+<li>查看配置信息</li>
+</ol>
+<p><code>git config --list</code>或者<code>git config -l</code>查看所有配置信息
+<code>git config --get-all user.name</code>或者<code>git config user.name</code>查看某个值的内容
+<code>git config --global -l</code>查看全局配置</p>
+<p>配置文件位置（按优先级从低到高）：</p>
+<ul>
+<li><code>/etc/gitconfig</code></li>
+<li><code>~/.gitconfig</code></li>
+</ul>
+<blockquote>
+<p><a href="http://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">http://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a>
+<a href="http://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration">http://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration</a>
+<a href="http://git-scm.com/docs/git-config">http://git-scm.com/docs/git-config</a>
+<a href="https://help.github.com/articles/changing-author-info/">https://help.github.com/articles/changing-author-info/</a></p>
+</blockquote>
+<p>配置当前库的git信息：</p>
+<p><code>git config --local user.name 'xxxx'</code>
+<code>git config --local user.email 'xxxx@xxx.com'</code></p>
+<blockquote>
+<p>也可以通过修改<code>.git/config</code>下的信息来修改当前仓库的git信息。
+<a href="https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config">https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config</a></p>
+</blockquote>
+<p>查看当前库的git信息：</p>
+<p><code>git config --local -l</code></p>
+<ol start="9">
+<li>修改历史提交日志</li>
+</ol>
+<blockquote>
+<p><a href="https://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git">https://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git</a>
+<a href="https://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git">https://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git</a>
+<a href="https://help.github.com/articles/changing-a-commit-message/">https://help.github.com/articles/changing-a-commit-message/</a>
+<a href="https://www.atlassian.com/git/tutorials/rewriting-history/git-commit--amend">https://www.atlassian.com/git/tutorials/rewriting-history/git-commit--amend</a></p>
+</blockquote>
+<ol start="10">
+<li>撤销本地已经commit但是还没有push的修改</li>
+</ol>
+<p><code>git reset --hard HEAD~1</code>       <a href="//%E6%92%A4%E9%94%80%E6%9C%80%E8%BF%91%E4%B8%80%E6%AC%A1commit">//撤销最近一次commit</a>，即从HEAD恢复到上一次commit</p>
+<blockquote>
+<p><a href="http://stackoverflow.com/questions/927358/how-to-undo-the-last-commit">http://stackoverflow.com/questions/927358/how-to-undo-the-last-commit</a>
+<a href="http://stackoverflow.com/questions/4114095/revert-to-a-previous-git-commit">Revert to a previous Git commit</a></p>
+</blockquote>
+<ol start="11">
+<li>查找具体的修改内容是什么时候commit的</li>
+</ol>
+<p><code>git log -G"正则表达式"</code>  例如：<code>git log -G"preswitch"</code></p>
+<blockquote>
+<p><a href="http://alblue.bandlem.com/2011/08/git-tip-of-week-searching-for-commits.html">http://alblue.bandlem.com/2011/08/git-tip-of-week-searching-for-commits.html</a>
+<a href="http://gitref.org/inspect/">http://gitref.org/inspect/</a></p>
+</blockquote>
+<p><code>git log -Spreswitch</code></p>
+<blockquote>
+<p><a href="https://stackoverflow.com/questions/1337320/how-to-grep-git-commit-diffs-or-contents-for-a-certain-word">https://stackoverflow.com/questions/1337320/how-to-grep-git-commit-diffs-or-contents-for-a-certain-word</a></p>
+</blockquote>
+<ol start="12">
+<li>修改提交历史记录中的特定内容</li>
+</ol>
+<pre><code>git filter-branch --commit-filter '
+        if [ "$GIT_AUTHOR_NAME" = "noscripter" ];
+        then
+                GIT_AUTHOR_NAME="anonymous";
+                GIT_AUTHOR_EMAIL="anonymous@special.gov.cn";
+                git commit-tree "$@";
+        else
+                git commit-tree "$@";
+        fi' HEAD
+</code></pre>
+<blockquote>
+<p><a href="https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History">https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History</a>
+<a href="http://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git">http://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git</a>
+<a href="https://help.github.com/articles/changing-author-info/">https://help.github.com/articles/changing-author-info/</a>
+<a href="https://help.github.com/articles/changing-a-commit-message/">https://help.github.com/articles/changing-a-commit-message/</a>
+<a href="http://serverfault.com/questions/12373/how-do-i-edit-gits-history-to-correct-an-incorrect-email-address-name">http://serverfault.com/questions/12373/how-do-i-edit-gits-history-to-correct-an-incorrect-email-address-name</a></p>
+</blockquote>
+<pre><code>git filter-branch --env-filter '
+    oldname="(old name)"
+    oldemail="(old email)"
+    newname="(new name)"
+    newemail="(new email)"
+    [ "$GIT_AUTHOR_EMAIL" = "$oldemail" ] &amp;&amp; GIT_AUTHOR_EMAIL="$newemail"
+    [ "$GIT_COMMITTER_EMAIL" = "$oldemail" ] &amp;&amp; GIT_COMMITTER_EMAIL="$newemail"
+    [ "$GIT_AUTHOR_NAME" = "$oldname" ] &amp;&amp; GIT_AUTHOR_NAME="$newname"
+    [ "$GIT_COMMITTER_NAME" = "$oldname" ] &amp;&amp; GIT_COMMITTER_NAME="$newname"
+    ' HEAD
+</code></pre>
+<ol start="13">
+<li>删除所有历史提交记录，只保存当前内容。</li>
+</ol>
+<pre><code>rm -rf .git
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin <github-uri>
+git push -u --force origin master
+</github-uri></code></pre>
+<blockquote>
+<p><a href="http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository">http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository</a></p>
+</blockquote>
+<ol start="14">
+<li>为github添加了sshkey，但是仍然提示需要输入用户名和密码。</li>
+</ol>
+<p>修改<code>.git/config</code>中的origin信息，将<code>https</code>协议改为<code>git@github.com:xxx/project-name</code>。</p>
+<p>或者使用<code>git remote set-url origin git@github.com:username/repo.git</code></p>
+<blockquote>
+<p><a href="http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password">http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password</a>
+<a href="https://help.github.com/articles/why-is-git-always-asking-for-my-password/">https://help.github.com/articles/why-is-git-always-asking-for-my-password/</a>
+<a href="https://help.github.com/articles/which-remote-url-should-i-use/#cloning-with-https-recommended">https://help.github.com/articles/which-remote-url-should-i-use/#cloning-with-https-recommended</a>
+<a href="https://help.github.com/articles/caching-your-github-password-in-git/">https://help.github.com/articles/caching-your-github-password-in-git/</a>
+<a href="https://help.github.com/articles/changing-a-remote-s-url/">https://help.github.com/articles/changing-a-remote-s-url/</a></p>
+</blockquote>
+<ol start="15">
+<li>如何测试github上的<code>sshkey</code>已经添加成功？</li>
+</ol>
+<pre><code>ssh -vT git@github.com
+</code></pre>
+<blockquote>
+<p><a href="https://help.github.com/articles/generating-ssh-keys/">https://help.github.com/articles/generating-ssh-keys/</a></p>
+</blockquote>
+<ol start="16">
+<li>如果使用ssh push时提示<code>Permission denied (publickey).</code>应该如何处理？</li>
+</ol>
+<p>错误信息为：</p>
+<pre><code>Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+</code></pre>
+<p>解决方案：</p>
+<pre><code>eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+ssh-add -l
+</code></pre>
+<p>注意，上面第二步<code>ssh-add</code>加入的是密钥，而不是公钥。</p>
+<p>如果<code>ssh-add -l</code>运行后显示<code>The agent has no identities.</code>说明没有把公钥加入到ssh客户端中。</p>
+<p>参考链接：</p>
+<ul>
+<li><a href="https://help.github.com/articles/error-permission-denied-publickey/">https://help.github.com/articles/error-permission-denied-publickey/</a></li>
+<li><a href="https://help.github.com/articles/generating-ssh-keys/">https://help.github.com/articles/generating-ssh-keys/</a></li>
+</ul>
+<ol start="17">
+<li>查看指定目录的修改记录</li>
+</ol>
+<p><code>git diff --relative=[path]</code></p>
+<ol start="18">
+<li>查看git修改的概况</li>
+</ol>
+<p><code>git diff --stat</code></p>
+<blockquote>
+<p><a href="http://usevim.com/2012/03/21/git-and-vimdiff/">http://usevim.com/2012/03/21/git-and-vimdiff/</a></p>
+</blockquote>
+<ol start="19">
+<li>git diff --patience</li>
+</ol>
+<p><a href="https://stackoverflow.com/questions/4045017/what-is-git-diff-patience-for">https://stackoverflow.com/questions/4045017/what-is-git-diff-patience-for</a>
+<a href="https://bramcohen.livejournal.com/73318.html">https://bramcohen.livejournal.com/73318.html</a>
+<a href="https://bramcohen.livejournal.com/73318.html">https://bramcohen.livejournal.com/73318.html</a></p>
+<ol start="20">
+<li>比较不同分支上的同一个文件</li>
+</ol>
+<pre><code>git diff mybranch master -- myfile.cs
+</code></pre>
+<p><a href="https://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches">https://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></p>
+<ol start="21">
+<li>查看当前git库文件所在的本地目录</li>
+</ol>
+<p><code>git rev-parse --show-toplevel</code></p>
+<ol start="22">
+<li>其他</li>
+</ol>
+<p><a href="http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/">http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/</a></p>
+<ol start="23">
+<li>怎样下载一个github仓库中的特定目录？</li>
+</ol>
+<p>例如：<code>svn checkout https://github.com/flazz/vim-colorschemes/trunk/colors/</code></p>
+<p>其中<code>trunk</code>对应github的master分支。</p>
+<p><a href="https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo">https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo</a></p>
+<p>Permission denied (publickey).
+<a href="https://help.github.com/articles/generating-ssh-keys/">https://help.github.com/articles/generating-ssh-keys/</a></p>
+<ol start="24">
+<li>修改某次commit的author信息| change author of a specific commit</li>
+</ol>
+<p><code>git commit --amend --author="Author Name &lt;email@address.com&gt;"</code></p>
+<p><a href="http://stackoverflow.com/questions/3042437/change-commit-author-at-one-specific-commit">http://stackoverflow.com/questions/3042437/change-commit-author-at-one-specific-commit</a></p>
+<ol start="25">
+<li>不能添加文件夹（new folder not show in git status）</li>
+</ol>
+<p>git status --ignored
+git add --force folder
+<a href="http://superuser.com/questions/583673/cant-add-folder-in-git">http://superuser.com/questions/583673/cant-add-folder-in-git</a></p>
+<ol start="26">
+<li>git查看要提交的内容</li>
+</ol>
+<p><a href="http://stackoverflow.com/questions/3636914/how-can-i-see-what-i-am-about-to-push-with-git">http://stackoverflow.com/questions/3636914/how-can-i-see-what-i-am-about-to-push-with-git</a></p>
+<ol start="27">
+<li>git撤销即将提交的修改</li>
+</ol>
+<p>git reset --hard [remote branch]
+<a href="http://stackoverflow.com/questions/3882583/how-to-discard-local-commits-in-git">http://stackoverflow.com/questions/3882583/how-to-discard-local-commits-in-git</a></p>
+<ol start="28">
+<li>git ignore</li>
+</ol>
+<p><a href="http://stackoverflow.com/questions/7335420/global-git-ignore">http://stackoverflow.com/questions/7335420/global-git-ignore</a></p>
+<ol start="29">
+<li>快速打开当前目录的gitlab或者github链接</li>
+</ol>
+<p>首先在<code>~/.gitconfig</code>中配置如下<code>alias</code>：</p>
+<pre><code>[alias]
+  url =! bash -c 'git config --get remote.origin.url | sed -E "s/.+:\\(.+\\)\\.git$/https:\\\\/\\\\/github\\\\.com\\\\/\\\\1/g"'
+</code></pre>
+<p>这样使用<code>git url</code>就可以看到仓库的http地址了。</p>
+<p>打开的话就只需要执行<code>git url | xargs open</code>或者：</p>
+<pre><code>open `git url`
+</code></pre>
+<p>即可。</p>
+<h3>fatal: Could not open file .git/rebase-merge/done for reading: No such file or directory</h3>
+<ol start="30">
+<li>修改commit信息</li>
+</ol>
+<p>未提交：</p>
+<p><code>git commit --amend -m'xxxx'</code></p>
+<p><a href="https://help.github.com/articles/changing-a-commit-message/">https://help.github.com/articles/changing-a-commit-message/</a></p>
+<p>已提交：</p>
+<p><code>git rebase -i HEAD~n</code></p>
+<p><code>git push --force</code></p>
+<ol start="31">
+<li><code>.git</code>目录</li>
+</ol>
+<p><code>git cat-file -p xxxhashvalue</code></p>
+<p><code>.git/objects</code>目录保存了每次commit的信息
+<code>.git/refs</code>目录保存了仓库的分支信息</p>
+<ul>
+<li><a href="https://medium.com/@pierreda/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807#.ib62a4g3b">https://medium.com/@pierreda/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807#.ib62a4g3b</a></li>
+</ul>
+<ol start="32">
+<li>git原理：git对象（git internals-git objects）</li>
+</ol>
+<p>Git is essentially a simple key-value data store.</p>
+<p><code>find .git/objects -type f</code>
+<code>echo 'test content' | git hash-object -w --stdin</code>
+<code>git cat-file -p xxxxhashvalue</code></p>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects">https://git-scm.com/book/en/v2/Git-Internals-Git-Objects</a></li>
+</ul>
+<ol start="32">
+<li>查看提交日志</li>
+</ol>
+<p><code>git log --pretty=format:"[%h] %ae, %ar: %s" --stat</code></p>
+<blockquote>
+<p>其中格式字符串的含义分别为：<code>%h</code>表示提交记录的 hash 值；<code>%ae</code>表示提交者的邮箱信息；<code>%ar</code>表示提交时间；<code>%s</code>表示提交日志信息。
+<code>git log</code>格式的详细信息可以通过<code>git help log</code>然后搜索<code>placeholder</code>查看。</p>
+</blockquote>
+<ol start="33">
+<li>快速编辑修改过的文件</li>
+</ol>
+<pre><code>vim -p `git log --name-only`
+</code></pre>
+<ol start="34">
+<li>快速比较两个分支同一个文件的不同</li>
+</ol>
+<pre><code>git diff mybranch..master -- myfile.cs
+git diff mybranch master -- myfile.cs
+</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches">http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></li>
+</ul>
+<ol start="35">
+<li>git merge 的标记说明</li>
+</ol>
+<ul>
+<li><a href="http://stackoverflow.com/questions/7901864/git-conflict-markers">http://stackoverflow.com/questions/7901864/git-conflict-markers</a></li>
+</ul>
+<ol start="36">
+<li>合并多个 commit</li>
+</ol>
+<pre><code>git rebase --interactive HEAD~2
+</code></pre>
+<p>在打开的编辑窗口中将多次 commit 的信息修改成<code>squash</code></p>
+<ol start="37">
+<li>查看某个文件的commit信息</li>
+</ol>
+<p><code>git shortlog -n -s &lt;file_name&gt;</code></p>
+</article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body><div></div></html>
