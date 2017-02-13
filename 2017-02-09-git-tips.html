@@ -1,373 +1,963 @@
 <!DOCTYPE html>
-<html lang="en" class=""><head>
+<html>
+<head>
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta http-equiv="Content-Language" content="en">
-  <link rel="stylesheet" type="text/css" href="./css/github-syntax-highlight.css">
-  <link rel="stylesheet" type="text/css" href="./github-markdown.css">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>1.md / xmark</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
   <style>
-    .markdown-body {
-      min-width: 200px;
-      max-width: 790px;
-      margin: 0 auto;
-      padding: 30px;
-    }
+
+  /*
+  The MIT License (MIT)
+
+  Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+  */
+
+  header {
+    display: none;
+  }
+
+  @font-face {
+    font-family: octicons-anchor;
+    src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+  }
+
+  body {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    color: #333;
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    word-wrap: break-word;
+    padding: 2em;
+  }
+
+  a {
+    background: transparent;
+  }
+
+  a:active,
+  a:hover {
+    outline: 0;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+  }
+
+  img {
+    border: 0;
+  }
+
+  hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+  }
+
+  pre {
+    overflow: auto;
+  }
+
+  code,
+  kbd,
+  pre {
+    font-family: monospace, monospace;
+    font-size: 1em;
+  }
+
+  input {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+  }
+
+  html input[disabled] {
+    cursor: default;
+  }
+
+  input {
+    line-height: normal;
+  }
+
+  input[type="checkbox"] {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+  }
+
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+
+  td,
+  th {
+    padding: 0;
+  }
+
+  * {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  input {
+    font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  a {
+    color: #4183c4;
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:focus,
+  a:active {
+    text-decoration: underline;
+  }
+
+  hr {
+    height: 0;
+    margin: 15px 0;
+    overflow: hidden;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  hr:before {
+    display: table;
+    content: "";
+  }
+
+  hr:after {
+    display: table;
+    clear: both;
+    content: "";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    line-height: 1.1;
+  }
+
+  h1 {
+    font-size: 30px;
+  }
+
+  h2 {
+    font-size: 21px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+
+  h5 {
+    font-size: 12px;
+  }
+
+  h6 {
+    font-size: 11px;
+  }
+
+  blockquote {
+    margin: 0;
+  }
+
+  ul,
+  ol {
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  ol ol,
+  ul ol {
+    list-style-type: lower-roman;
+  }
+
+  ul ul ol,
+  ul ol ol,
+  ol ul ol,
+  ol ol ol {
+    list-style-type: lower-alpha;
+  }
+
+  dd {
+    margin-left: 0;
+  }
+
+  code {
+    font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  }
+
+  pre {
+    margin-top: 0;
+    margin-bottom: 0;
+    font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  }
+
+  .octicon {
+    font: normal normal 16px octicons-anchor;
+    line-height: 1;
+    display: inline-block;
+    text-decoration: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .octicon-link:before {
+    content: '\f05c';
+  }
+
+  .markdown-body>*:first-child {
+    margin-top: 0 !important;
+  }
+
+  .markdown-body>*:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .anchor {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    padding-right: 6px;
+    padding-left: 30px;
+    margin-left: -30px;
+  }
+
+  .anchor:focus {
+    outline: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    position: relative;
+    margin-top: 1em;
+    margin-bottom: 16px;
+    font-weight: bold;
+    line-height: 1.4;
+  }
+
+  h1 .octicon-link,
+  h2 .octicon-link,
+  h3 .octicon-link,
+  h4 .octicon-link,
+  h5 .octicon-link,
+  h6 .octicon-link {
+    display: none;
+    color: #000;
+    vertical-align: middle;
+  }
+
+  h1:hover .anchor,
+  h2:hover .anchor,
+  h3:hover .anchor,
+  h4:hover .anchor,
+  h5:hover .anchor,
+  h6:hover .anchor {
+    padding-left: 8px;
+    margin-left: -30px;
+    line-height: 1;
+    text-decoration: none;
+  }
+
+  h1:hover .anchor .octicon-link,
+  h2:hover .anchor .octicon-link,
+  h3:hover .anchor .octicon-link,
+  h4:hover .anchor .octicon-link,
+  h5:hover .anchor .octicon-link,
+  h6:hover .anchor .octicon-link {
+    display: inline-block;
+  }
+
+  h1 {
+    padding-bottom: 0.3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+  }
+
+  h2 {
+    padding-bottom: 0.3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+  }
+
+  h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+  }
+
+  h4 {
+    font-size: 1.25em;
+  }
+
+  h5 {
+    font-size: 1em;
+  }
+
+  h6 {
+    font-size: 1em;
+    color: #777;
+  }
+
+  p,
+  blockquote,
+  ul,
+  ol,
+  dl,
+  table,
+  pre {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  hr {
+    height: 4px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+  }
+
+  ul,
+  ol {
+    padding-left: 2em;
+  }
+
+  ul ul,
+  ul ol,
+  ol ol,
+  ol ul {
+    margin-top: 0px;
+    margin-bottom: 0;
+  }
+
+  li>p {
+    margin-top: 0;
+  }
+
+  dl {
+    padding: 0;
+  }
+
+  dl dt {
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+  }
+
+  dl dd {
+    padding: 0 16px;
+    margin-bottom: 16px;
+  }
+
+  blockquote {
+    padding: 0 15px;
+    color: #777;
+    border-left: 4px solid #ddd;
+  }
+
+  blockquote>:first-child {
+    margin-top: 0;
+  }
+
+  blockquote>:last-child {
+    margin-bottom: 0;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all;
+  }
+
+  table th {
+    font-weight: bold;
+  }
+
+  table th,
+  table td {
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+  }
+
+  table tr {
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+  }
+
+  table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+  }
+
+  img {
+    max-width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  code {
+    padding: 0;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(0,0,0,0.04);
+    border-radius: 3px;
+  }
+
+  code:before,
+  code:after {
+    letter-spacing: -0.2em;
+    content: "\00a0";
+  }
+
+  pre>code {
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0;
+  }
+
+  .highlight {
+    margin-bottom: 16px;
+  }
+
+  .highlight pre,
+  pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+  }
+
+  .highlight pre {
+    margin-bottom: 0;
+    word-break: normal;
+  }
+
+  pre {
+    word-wrap: normal;
+  }
+
+  pre code {
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+  }
+
+  pre code:before,
+  pre code:after {
+    content: normal;
+  }
+
+  .pl-c {
+    color: #969896;
+  }
+
+  .pl-c1,
+  .pl-mdh,
+  .pl-mm,
+  .pl-mp,
+  .pl-mr,
+  .pl-s1 .pl-v,
+  .pl-s3,
+  .pl-sc,
+  .pl-sv {
+    color: #0086b3;
+  }
+
+  .pl-e,
+  .pl-en {
+    color: #795da3;
+  }
+
+  .pl-s1 .pl-s2,
+  .pl-smi,
+  .pl-smp,
+  .pl-stj,
+  .pl-vo,
+  .pl-vpf {
+    color: #333;
+  }
+
+  .pl-ent {
+    color: #63a35c;
+  }
+
+  .pl-k,
+  .pl-s,
+  .pl-st {
+    color: #a71d5d;
+  }
+
+  .pl-pds,
+  .pl-s1,
+  .pl-s1 .pl-pse .pl-s2,
+  .pl-sr,
+  .pl-sr .pl-cce,
+  .pl-sr .pl-sra,
+  .pl-sr .pl-sre,
+  .pl-src,
+  .pl-v {
+    color: #df5000;
+  }
+
+  .pl-id {
+    color: #b52a1d;
+  }
+
+  .pl-ii {
+    background-color: #b52a1d;
+    color: #f8f8f8;
+  }
+
+  .pl-sr .pl-cce {
+    color: #63a35c;
+    font-weight: bold;
+  }
+
+  .pl-ml {
+    color: #693a17;
+  }
+
+  .pl-mh,
+  .pl-mh .pl-en,
+  .pl-ms {
+    color: #1d3e81;
+    font-weight: bold;
+  }
+
+  .pl-mq {
+    color: #008080;
+  }
+
+  .pl-mi {
+    color: #333;
+    font-style: italic;
+  }
+
+  .pl-mb {
+    color: #333;
+    font-weight: bold;
+  }
+
+  .pl-md,
+  .pl-mdhf {
+    background-color: #ffecec;
+    color: #bd2c00;
+  }
+
+  .pl-mdht,
+  .pl-mi1 {
+    background-color: #eaffea;
+    color: #55a532;
+  }
+
+  .pl-mdr {
+    color: #795da3;
+    font-weight: bold;
+  }
+
+  .pl-mo {
+    color: #1d3e81;
+  }
+
+  kbd {
+    background-color: #e7e7e7;
+    background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
+    background-image: linear-gradient(#fefefe, #e7e7e7);
+    background-repeat: repeat-x;
+    display: inline-block;
+    padding: 3px 5px;
+    font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    line-height: 10px;
+    color: #000;
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+  }
+
+  .task-list-item {
+    list-style-type: none;
+  }
+
+  .task-list-item+.task-list-item {
+    margin-top: 3px;
+  }
+
+  .task-list-item input {
+    float: left;
+    margin: 0.3em 0 0.25em -1.6em;
+    vertical-align: middle;
+  }
+
   </style>
+</head>
 <body>
-  <div class="wrapper">
-    <div class="container">
-      <div class="repository-with-sidebar repo-container new-discussion-timeline with-full-navigation">
-        <div id="js-repo-pjax-container" class="repository-content context-loader-container">
-          <div id="readme" class="boxed-group flush clearfix announce instapaper_body md">
-            <article class="markdown-body"><h2>Git技巧</h2>
-<h3>如何回退到某一次提交？</h3>
-<ol>
-<li>本地回退到某次提交：</li>
-</ol>
-<p><code>git checkout xxx-commit-hash</code></p>
-<ol start="2">
-<li>远程分支回退到某次提交：</li>
-</ol>
-<p><code>git reset --hard xxx-commit-hash</code></p>
-<p>跟着上面的命令，先将工作目录回退到某次提交，然后执行下面的命令：
-git push -f origin xxx分支</p>
-<blockquote>
-<p>来源：
-<a href="https://stackoverflow.com/questions/5816688/reseting-remote-to-a-certain-commit">https://stackoverflow.com/questions/5816688/reseting-remote-to-a-certain-commit</a></p>
-</blockquote>
-<blockquote>
-<p><a href="https://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely">https://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely</a></p>
-</blockquote>
-<ol start="3">
-<li>修改上次提交的提交信息</li>
-</ol>
-<p><code>git commit --amend -m 'xxxx'</code>
-<code>git push remote branch --force</code>    或者  <code>git push remote branch -f</code></p>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git">http://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git</a></p>
-</blockquote>
-<ol start="4">
-<li>删除远程分支</li>
-</ol>
-<p><code>git push origin :&lt;branchName&gt;</code></p>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely">http://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely</a></p>
-</blockquote>
-<ol start="5">
-<li>比较两个不同分支上的相同文件的不同</li>
-</ol>
-<p><code>git diff branch1 branch2 xxx_file</code></p>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches">http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a>
-<a href="http://stackoverflow.com/questions/255202/how-do-i-view-git-diff-output-with-visual-diff-program">http://stackoverflow.com/questions/255202/how-do-i-view-git-diff-output-with-visual-diff-program</a>
-<a href="http://stackoverflow.com/questions/9834689/comparing-two-branches-in-git">http://stackoverflow.com/questions/9834689/comparing-two-branches-in-git</a></p>
-</blockquote>
-<ol start="6">
-<li>查看两个分支有哪些文件做了修改</li>
-</ol>
-<p><code>git diff --name-status branch1 branch2</code>
-`git diff --stat --color branch1 branch2</p>
-<ol start="7">
-<li>查看当前库的所有远端版本</li>
-</ol>
-<p><code>git branch -ar</code>
-<code>git ls-remote</code>
-<code>git remote show origin</code></p>
-<blockquote>
-<p><a href="http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes">http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes</a>
-<a href="https://stackoverflow.com/questions/3471827/how-do-i-list-all-remote-branches-in-git-1-7">https://stackoverflow.com/questions/3471827/how-do-i-list-all-remote-branches-in-git-1-7</a></p>
-</blockquote>
-<p>有时候本地的远程信息没有同步，需要执行下面的命令同步：</p>
-<p><code>git remote update</code></p>
-<ol start="8">
-<li>查看配置信息</li>
-</ol>
-<p><code>git config --list</code>或者<code>git config -l</code>查看所有配置信息
-<code>git config --get-all user.name</code>或者<code>git config user.name</code>查看某个值的内容
-<code>git config --global -l</code>查看全局配置</p>
-<p>配置文件位置（按优先级从低到高）：</p>
+<header>
+<h1 class="title">1.md / xmark</h1>
+</header>
+<h2 id="git">Git技巧</h2>
+<h1>1. 如何回退到某一次提交？</h1>
+<p>本地回退到某次提交：</p>
+<pre class="shell"><code>git checkout xxx-commit-hash</code></pre>
+<p>远程分支回退到某次提交：</p>
+<pre class="shell"><code>git reset --hard xxx-commit-hash</code></pre>
+<p>跟着上面的命令，先将工作目录回退到某次提交，然后执行下面的命令：</p>
+<pre class="shell"><code>git push -f origin xxx分支</code></pre>
 <ul>
-<li><code>/etc/gitconfig</code></li>
-<li><code>~/.gitconfig</code></li>
+<li><a href="https://stackoverflow.com/questions/5816688/reseting-remote-to-a-certain-commit" class="uri">https://stackoverflow.com/questions/5816688/reseting-remote-to-a-certain-commit</a></li>
+<li><a href="https://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely" class="uri">https://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely</a></li>
 </ul>
-<blockquote>
-<p><a href="http://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup">http://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a>
-<a href="http://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration">http://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration</a>
-<a href="http://git-scm.com/docs/git-config">http://git-scm.com/docs/git-config</a>
-<a href="https://help.github.com/articles/changing-author-info/">https://help.github.com/articles/changing-author-info/</a></p>
-</blockquote>
-<p>配置当前库的git信息：</p>
-<p><code>git config --local user.name 'xxxx'</code>
-<code>git config --local user.email 'xxxx@xxx.com'</code></p>
-<blockquote>
-<p>也可以通过修改<code>.git/config</code>下的信息来修改当前仓库的git信息。
-<a href="https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config">https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config</a></p>
-</blockquote>
-<p>查看当前库的git信息：</p>
-<p><code>git config --local -l</code></p>
-<ol start="9">
-<li>修改历史提交日志</li>
-</ol>
-<blockquote>
-<p><a href="https://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git">https://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git</a>
-<a href="https://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git">https://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git</a>
-<a href="https://help.github.com/articles/changing-a-commit-message/">https://help.github.com/articles/changing-a-commit-message/</a>
-<a href="https://www.atlassian.com/git/tutorials/rewriting-history/git-commit--amend">https://www.atlassian.com/git/tutorials/rewriting-history/git-commit--amend</a></p>
-</blockquote>
-<ol start="10">
-<li>撤销本地已经commit但是还没有push的修改</li>
-</ol>
-<p><code>git reset --hard HEAD~1</code>       <a href="//%E6%92%A4%E9%94%80%E6%9C%80%E8%BF%91%E4%B8%80%E6%AC%A1commit">//撤销最近一次commit</a>，即从HEAD恢复到上一次commit</p>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/927358/how-to-undo-the-last-commit">http://stackoverflow.com/questions/927358/how-to-undo-the-last-commit</a>
-<a href="http://stackoverflow.com/questions/4114095/revert-to-a-previous-git-commit">Revert to a previous Git commit</a></p>
-</blockquote>
-<ol start="11">
-<li>查找具体的修改内容是什么时候commit的</li>
-</ol>
-<p><code>git log -G"正则表达式"</code>  例如：<code>git log -G"preswitch"</code></p>
-<blockquote>
-<p><a href="http://alblue.bandlem.com/2011/08/git-tip-of-week-searching-for-commits.html">http://alblue.bandlem.com/2011/08/git-tip-of-week-searching-for-commits.html</a>
-<a href="http://gitref.org/inspect/">http://gitref.org/inspect/</a></p>
-</blockquote>
-<p><code>git log -Spreswitch</code></p>
-<blockquote>
-<p><a href="https://stackoverflow.com/questions/1337320/how-to-grep-git-commit-diffs-or-contents-for-a-certain-word">https://stackoverflow.com/questions/1337320/how-to-grep-git-commit-diffs-or-contents-for-a-certain-word</a></p>
-</blockquote>
-<ol start="12">
-<li>修改提交历史记录中的特定内容</li>
-</ol>
-<pre><code>git filter-branch --commit-filter '
-        if [ "$GIT_AUTHOR_NAME" = "noscripter" ];
+<h1>2. 修改上次提交的提交信息</h1>
+<pre class="shell"><code>git commit --amend -m &#39;xxxx&#39;
+git push remote branch --force # 或者 git push remote branch -f</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git" class="uri">http://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git</a></li>
+</ul>
+<h1>3. 删除远程分支</h1>
+<pre class="shell"><code>git push origin :&lt;branchName&gt;</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely" class="uri">http://stackoverflow.com/questions/2003505/delete-a-git-branch-both-locally-and-remotely</a></li>
+</ul>
+<h1>4. 比较两个不同分支上的相同文件的不同</h1>
+<pre class="shell"><code>git diff branch1 branch2 xxx_file</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches" class="uri">http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></li>
+<li>&lt;<a href="http://stackoverflow.com/questions/255202/how-do-i-view-git-diff-output-with-visual-diff-program" class="uri">http://stackoverflow.com/questions/255202/how-do-i-view-git-diff-output-with-visual-diff-program</a> <a href="http://stackoverflow.com/questions/9834689/comparing-two-branches-in-git" class="uri">http://stackoverflow.com/questions/9834689/comparing-two-branches-in-git</a>&gt;</li>
+</ul>
+<h1>5. 查看两个分支有哪些文件做了修改</h1>
+<pre class="shell"><code>git diff --name-status branch1 branch2</code></pre>
+<p>或者：</p>
+<pre class="shell"><code>git diff --stat --color branch1 branch2</code></pre>
+<h1>6. 查看当前库的所有远端版本</h1>
+<pre class="shell"><code>git branch -ar
+git ls-remote
+git remote show origin</code></pre>
+<ul>
+<li>&lt;<a href="http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes" class="uri">http://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes</a> <a href="https://stackoverflow.com/questions/3471827/how-do-i-list-all-remote-branches-in-git-1-7" class="uri">https://stackoverflow.com/questions/3471827/how-do-i-list-all-remote-branches-in-git-1-7</a>&gt;</li>
+</ul>
+<p>有时候本地的远程信息没有同步，需要执行下面的命令同步：</p>
+<pre class="shell"><code>git remote update</code></pre>
+<h1>7. 查看配置信息</h1>
+<pre class="shell"><code>git config --list</code></pre>
+<p>或者：</p>
+<pre class="shell"><code>git config -l</code></pre>
+<p>查看所有配置信息：</p>
+<pre class="shell"><code>git config --get-all user.name</code></pre>
+<p>或者：</p>
+<pre class="shell"><code>git config user.name</code></pre>
+<p>查看某个值的内容：</p>
+<pre class="shell"><code>git config --global -l</code></pre>
+<p>查看全局配置</p>
+<h1>8. 配置文件位置（按优先级从低到高）：</h1>
+<pre class="shell"><code>/etc/gitconfig
+~/.gitconfig</code></pre>
+<ul>
+<li><a href="http://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup" class="uri">http://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup</a></li>
+<li><a href="http://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration" class="uri">http://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration</a></li>
+<li><a href="http://git-scm.com/docs/git-config" class="uri">http://git-scm.com/docs/git-config</a></li>
+<li><a href="https://help.github.com/articles/changing-author-info/" class="uri">https://help.github.com/articles/changing-author-info/</a></li>
+</ul>
+<h1 id="git">9. 配置当前库的git信息：</h1>
+<pre class="shell"><code>git config --local user.name &#39;xxxx&#39;
+git config --local user.email &#39;xxxx@xxx.com&#39;</code></pre>
+<p>也可以通过修改<code>.git/config</code>下的信息来修改当前仓库的git信息。</p>
+<ul>
+<li><a href="https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config" class="uri">https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config</a></li>
+</ul>
+<h1 id="git">10. 查看当前库的git信息：</h1>
+<pre class="shell"><code>git config --local -l</code></pre>
+<h1>11. 修改历史提交日志</h1>
+<pre class="shell"><code>#!/bin/sh
+
+git filter-branch --env-filter &#39;
+OLD_EMAIL=&quot;your-old-email@example.com&quot;
+CORRECT_NAME=&quot;Your Correct Name&quot;
+CORRECT_EMAIL=&quot;your-correct-email@example.com&quot;
+if [ &quot;$GIT_COMMITTER_EMAIL&quot; = &quot;$OLD_EMAIL&quot; ]
+then
+    export GIT_COMMITTER_NAME=&quot;$CORRECT_NAME&quot;
+    export GIT_COMMITTER_EMAIL=&quot;$CORRECT_EMAIL&quot;
+fi
+if [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;$OLD_EMAIL&quot; ]
+then
+    export GIT_AUTHOR_NAME=&quot;$CORRECT_NAME&quot;
+    export GIT_AUTHOR_EMAIL=&quot;$CORRECT_EMAIL&quot;
+fi
+&#39; --tag-name-filter cat -- --branches --tags</code></pre>
+<ul>
+<li><a href="https://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git" class="uri">https://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git</a></li>
+<li><a href="https://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git" class="uri">https://stackoverflow.com/questions/179123/edit-an-incorrect-commit-message-in-git</a></li>
+<li><a href="https://help.github.com/articles/changing-a-commit-message/" class="uri">https://help.github.com/articles/changing-a-commit-message/</a></li>
+<li><a href="https://www.atlassian.com/git/tutorials/rewriting-history/git-commit--amend" class="uri">https://www.atlassian.com/git/tutorials/rewriting-history/git-commit--amend</a></li>
+</ul>
+<h1 id="commitpush">12. 撤销本地已经commit但是还没有push的修改</h1>
+<pre class="shell"><code>git reset --hard HEAD~1 #撤销最近一次commit，即从HEAD恢复到上一次commit</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/927358/how-to-undo-the-last-commit" class="uri">http://stackoverflow.com/questions/927358/how-to-undo-the-last-commit</a></li>
+</ul>
+<h1 id="commit">13. 查找具体的修改内容是什么时候commit的</h1>
+<pre class="shell"><code>git log -G&quot;正则表达式&quot;</code></pre>
+<p>例如：<code>git log -G&quot;preswitch&quot;</code></p>
+<ul>
+<li>&lt;<a href="http://alblue.bandlem.com/2011/08/git-tip-of-week-searching-for-commits.html" class="uri">http://alblue.bandlem.com/2011/08/git-tip-of-week-searching-for-commits.html</a> <a href="http://gitref.org/inspect/" class="uri">http://gitref.org/inspect/</a>&gt;</li>
+</ul>
+<pre class="shell"><code>git log -Spreswitch</code></pre>
+<ul>
+<li><a href="https://stackoverflow.com/questions/1337320/how-to-grep-git-commit-diffs-or-contents-for-a-certain-word" class="uri">https://stackoverflow.com/questions/1337320/how-to-grep-git-commit-diffs-or-contents-for-a-certain-word</a></li>
+</ul>
+<h1>14. 修改提交历史记录中的特定内容</h1>
+<pre><code>git filter-branch --commit-filter &#39;
+        if [ &quot;$GIT_AUTHOR_NAME&quot; = &quot;noscripter&quot; ];
         then
-                GIT_AUTHOR_NAME="anonymous";
-                GIT_AUTHOR_EMAIL="anonymous@special.gov.cn";
-                git commit-tree "$@";
+                GIT_AUTHOR_NAME=&quot;anonymous&quot;;
+                GIT_AUTHOR_EMAIL=&quot;anonymous@special.gov.cn&quot;;
+                git commit-tree &quot;$@&quot;;
         else
-                git commit-tree "$@";
-        fi' HEAD
-</code></pre>
-<blockquote>
-<p><a href="https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History">https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History</a>
-<a href="http://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git">http://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git</a>
-<a href="https://help.github.com/articles/changing-author-info/">https://help.github.com/articles/changing-author-info/</a>
-<a href="https://help.github.com/articles/changing-a-commit-message/">https://help.github.com/articles/changing-a-commit-message/</a>
-<a href="http://serverfault.com/questions/12373/how-do-i-edit-gits-history-to-correct-an-incorrect-email-address-name">http://serverfault.com/questions/12373/how-do-i-edit-gits-history-to-correct-an-incorrect-email-address-name</a></p>
-</blockquote>
-<pre><code>git filter-branch --env-filter '
-    oldname="(old name)"
-    oldemail="(old email)"
-    newname="(new name)"
-    newemail="(new email)"
-    [ "$GIT_AUTHOR_EMAIL" = "$oldemail" ] &amp;&amp; GIT_AUTHOR_EMAIL="$newemail"
-    [ "$GIT_COMMITTER_EMAIL" = "$oldemail" ] &amp;&amp; GIT_COMMITTER_EMAIL="$newemail"
-    [ "$GIT_AUTHOR_NAME" = "$oldname" ] &amp;&amp; GIT_AUTHOR_NAME="$newname"
-    [ "$GIT_COMMITTER_NAME" = "$oldname" ] &amp;&amp; GIT_COMMITTER_NAME="$newname"
-    ' HEAD
-</code></pre>
-<ol start="13">
-<li>删除所有历史提交记录，只保存当前内容。</li>
-</ol>
-<pre><code>rm -rf .git
+                git commit-tree &quot;$@&quot;;
+        fi&#39; HEAD</code></pre>
+<ul>
+<li><a href="https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History" class="uri">https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History</a></li>
+<li><a href="http://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git" class="uri">http://stackoverflow.com/questions/750172/change-the-author-of-a-commit-in-git</a></li>
+<li><a href="https://help.github.com/articles/changing-author-info/" class="uri">https://help.github.com/articles/changing-author-info/</a></li>
+<li><a href="https://help.github.com/articles/changing-a-commit-message/" class="uri">https://help.github.com/articles/changing-a-commit-message/</a></li>
+<li><a href="http://serverfault.com/questions/12373/how-do-i-edit-gits-history-to-correct-an-incorrect-email-address-name" class="uri">http://serverfault.com/questions/12373/how-do-i-edit-gits-history-to-correct-an-incorrect-email-address-name</a></li>
+</ul>
+<pre class="shell"><code>git filter-branch --env-filter &#39;
+    oldname=&quot;(old name)&quot;
+    oldemail=&quot;(old email)&quot;
+    newname=&quot;(new name)&quot;
+    newemail=&quot;(new email)&quot;
+    [ &quot;$GIT_AUTHOR_EMAIL&quot; = &quot;$oldemail&quot; ] &amp;&amp; GIT_AUTHOR_EMAIL=&quot;$newemail&quot;
+    [ &quot;$GIT_COMMITTER_EMAIL&quot; = &quot;$oldemail&quot; ] &amp;&amp; GIT_COMMITTER_EMAIL=&quot;$newemail&quot;
+    [ &quot;$GIT_AUTHOR_NAME&quot; = &quot;$oldname&quot; ] &amp;&amp; GIT_AUTHOR_NAME=&quot;$newname&quot;
+    [ &quot;$GIT_COMMITTER_NAME&quot; = &quot;$oldname&quot; ] &amp;&amp; GIT_COMMITTER_NAME=&quot;$newname&quot;
+    &#39; HEAD</code></pre>
+<h1>15. 删除所有历史提交记录，只保存当前内容。</h1>
+<pre class="shell"><code>rm -rf .git
 git init
 git add .
-git commit -m "Initial commit"
-git remote add origin <github-uri>
-git push -u --force origin master
-</github-uri></code></pre>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository">http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository</a></p>
-</blockquote>
-<ol start="14">
-<li>为github添加了sshkey，但是仍然提示需要输入用户名和密码。</li>
-</ol>
-<p>修改<code>.git/config</code>中的origin信息，将<code>https</code>协议改为<code>git@github.com:xxx/project-name</code>。</p>
+git commit -m &quot;Initial commit&quot;
+git remote add origin
+git push -u --force origin master</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository" class="uri">http://stackoverflow.com/questions/9683279/make-the-current-commit-the-only-initial-commit-in-a-git-repository</a></li>
+</ul>
+<h1 id="githubsshkey">16. 为github添加了sshkey，但是仍然提示需要输入用户名和密码。</h1>
+<p>修改<code>.git/config</code>中的<code>origin</code>信息，将<code>https</code>协议改为<code>git@github.com:xxx/project-name</code>。</p>
 <p>或者使用<code>git remote set-url origin git@github.com:username/repo.git</code></p>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password">http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password</a>
-<a href="https://help.github.com/articles/why-is-git-always-asking-for-my-password/">https://help.github.com/articles/why-is-git-always-asking-for-my-password/</a>
-<a href="https://help.github.com/articles/which-remote-url-should-i-use/#cloning-with-https-recommended">https://help.github.com/articles/which-remote-url-should-i-use/#cloning-with-https-recommended</a>
-<a href="https://help.github.com/articles/caching-your-github-password-in-git/">https://help.github.com/articles/caching-your-github-password-in-git/</a>
-<a href="https://help.github.com/articles/changing-a-remote-s-url/">https://help.github.com/articles/changing-a-remote-s-url/</a></p>
-</blockquote>
-<ol start="15">
-<li>如何测试github上的<code>sshkey</code>已经添加成功？</li>
-</ol>
-<pre><code>ssh -vT git@github.com
-</code></pre>
-<blockquote>
-<p><a href="https://help.github.com/articles/generating-ssh-keys/">https://help.github.com/articles/generating-ssh-keys/</a></p>
-</blockquote>
-<ol start="16">
-<li>如果使用ssh push时提示<code>Permission denied (publickey).</code>应该如何处理？</li>
-</ol>
+<ul>
+<li><a href="http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password" class="uri">http://stackoverflow.com/questions/6565357/git-push-requires-username-and-password</a></li>
+<li><a href="https://help.github.com/articles/why-is-git-always-asking-for-my-password/" class="uri">https://help.github.com/articles/why-is-git-always-asking-for-my-password/</a></li>
+<li><a href="https://help.github.com/articles/which-remote-url-should-i-use/#cloning-with-https-recommended" class="uri">https://help.github.com/articles/which-remote-url-should-i-use/#cloning-with-https-recommended</a></li>
+<li><a href="https://help.github.com/articles/caching-your-github-password-in-git/" class="uri">https://help.github.com/articles/caching-your-github-password-in-git/</a></li>
+<li><a href="https://help.github.com/articles/changing-a-remote-s-url/" class="uri">https://help.github.com/articles/changing-a-remote-s-url/</a></li>
+</ul>
+<h1 id="githubsshkey">17. 如何测试github上的sshkey已经添加成功？</h1>
+<pre class="shell"><code>ssh -vT git@github.com</code></pre>
+<ul>
+<li><a href="https://help.github.com/articles/generating-ssh-keys/" class="uri">https://help.github.com/articles/generating-ssh-keys/</a></li>
+</ul>
+<h1 id="ssh-pushpermission-denied-publickey.">18. 如果使用ssh push时提示Permission denied (publickey).应该如何处理？</h1>
 <p>错误信息为：</p>
-<pre><code>Permission denied (publickey).
+<pre class="shell"><code>Permission denied (publickey).
 fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights
-and the repository exists.
-</code></pre>
-<p>解决方案：</p>
-<pre><code>eval "$(ssh-agent -s)"
+and the repository exists.</code></pre>
+<p>解决方法：</p>
+<pre class="shell"><code>eval &quot;$(ssh-agent -s)&quot;
 ssh-add ~/.ssh/id_rsa
-ssh-add -l
-</code></pre>
-<p>注意，上面第二步<code>ssh-add</code>加入的是密钥，而不是公钥。</p>
+ssh-add -l</code></pre>
+<p>注意，上面第二步ssh-add加入的是密钥，而不是公钥。</p>
 <p>如果<code>ssh-add -l</code>运行后显示<code>The agent has no identities.</code>说明没有把公钥加入到ssh客户端中。</p>
 <p>参考链接：</p>
 <ul>
-<li><a href="https://help.github.com/articles/error-permission-denied-publickey/">https://help.github.com/articles/error-permission-denied-publickey/</a></li>
-<li><a href="https://help.github.com/articles/generating-ssh-keys/">https://help.github.com/articles/generating-ssh-keys/</a></li>
+<li><a href="https://help.github.com/articles/error-permission-denied-publickey/" class="uri">https://help.github.com/articles/error-permission-denied-publickey/</a></li>
+<li><a href="https://help.github.com/articles/generating-ssh-keys/" class="uri">https://help.github.com/articles/generating-ssh-keys/</a></li>
 </ul>
-<ol start="17">
-<li>查看指定目录的修改记录</li>
-</ol>
-<p><code>git diff --relative=[path]</code></p>
-<ol start="18">
-<li>查看git修改的概况</li>
-</ol>
-<p><code>git diff --stat</code></p>
-<blockquote>
-<p><a href="http://usevim.com/2012/03/21/git-and-vimdiff/">http://usevim.com/2012/03/21/git-and-vimdiff/</a></p>
-</blockquote>
-<ol start="19">
-<li>git diff --patience</li>
-</ol>
-<p><a href="https://stackoverflow.com/questions/4045017/what-is-git-diff-patience-for">https://stackoverflow.com/questions/4045017/what-is-git-diff-patience-for</a>
-<a href="https://bramcohen.livejournal.com/73318.html">https://bramcohen.livejournal.com/73318.html</a>
-<a href="https://bramcohen.livejournal.com/73318.html">https://bramcohen.livejournal.com/73318.html</a></p>
-<ol start="20">
-<li>比较不同分支上的同一个文件</li>
-</ol>
-<pre><code>git diff mybranch master -- myfile.cs
-</code></pre>
-<p><a href="https://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches">https://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></p>
-<ol start="21">
-<li>查看当前git库文件所在的本地目录</li>
-</ol>
-<p><code>git rev-parse --show-toplevel</code></p>
-<ol start="22">
-<li>其他</li>
-</ol>
-<p><a href="http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/">http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/</a></p>
-<ol start="23">
-<li>怎样下载一个github仓库中的特定目录？</li>
-</ol>
-<p>例如：<code>svn checkout https://github.com/flazz/vim-colorschemes/trunk/colors/</code></p>
-<p>其中<code>trunk</code>对应github的master分支。</p>
-<p><a href="https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo">https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo</a></p>
-<p>Permission denied (publickey).
-<a href="https://help.github.com/articles/generating-ssh-keys/">https://help.github.com/articles/generating-ssh-keys/</a></p>
-<ol start="24">
-<li>修改某次commit的author信息| change author of a specific commit</li>
-</ol>
-<p><code>git commit --amend --author="Author Name &lt;email@address.com&gt;"</code></p>
-<p><a href="http://stackoverflow.com/questions/3042437/change-commit-author-at-one-specific-commit">http://stackoverflow.com/questions/3042437/change-commit-author-at-one-specific-commit</a></p>
-<ol start="25">
-<li>不能添加文件夹（new folder not show in git status）</li>
-</ol>
-<p>git status --ignored
-git add --force folder
-<a href="http://superuser.com/questions/583673/cant-add-folder-in-git">http://superuser.com/questions/583673/cant-add-folder-in-git</a></p>
-<ol start="26">
-<li>git查看要提交的内容</li>
-</ol>
-<p><a href="http://stackoverflow.com/questions/3636914/how-can-i-see-what-i-am-about-to-push-with-git">http://stackoverflow.com/questions/3636914/how-can-i-see-what-i-am-about-to-push-with-git</a></p>
-<ol start="27">
-<li>git撤销即将提交的修改</li>
-</ol>
-<p>git reset --hard [remote branch]
-<a href="http://stackoverflow.com/questions/3882583/how-to-discard-local-commits-in-git">http://stackoverflow.com/questions/3882583/how-to-discard-local-commits-in-git</a></p>
-<ol start="28">
-<li>git ignore</li>
-</ol>
-<p><a href="http://stackoverflow.com/questions/7335420/global-git-ignore">http://stackoverflow.com/questions/7335420/global-git-ignore</a></p>
-<ol start="29">
-<li>快速打开当前目录的gitlab或者github链接</li>
-</ol>
+<h1>19. 查看指定目录的修改记录</h1>
+<pre class="shell"><code>git diff --relative=[path]</code></pre>
+<h1 id="git">20. 查看git修改的概况</h1>
+<pre class="shell"><code>git diff --stat</code></pre>
+<ul>
+<li><a href="http://usevim.com/2012/03/21/git-and-vimdiff/" class="uri">http://usevim.com/2012/03/21/git-and-vimdiff/</a></li>
+</ul>
+<pre class="shell"><code>git diff --patience</code></pre>
+<ul>
+<li><a href="https://stackoverflow.com/questions/4045017/what-is-git-diff-patience-for" class="uri">https://stackoverflow.com/questions/4045017/what-is-git-diff-patience-for</a></li>
+<li><a href="https://bramcohen.livejournal.com/73318.html" class="uri">https://bramcohen.livejournal.com/73318.html</a></li>
+<li><a href="https://bramcohen.livejournal.com/73318.html" class="uri">https://bramcohen.livejournal.com/73318.html</a></li>
+</ul>
+<h1>21. 比较不同分支上的同一个文件</h1>
+<pre class="shell"><code>git diff mybranch master -- myfile.cs</code></pre>
+<ul>
+<li><a href="https://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches" class="uri">https://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></li>
+</ul>
+<h1 id="git">22. 查看当前git库文件所在的本地目录</h1>
+<pre class="shell"><code>git rev-parse --show-toplevel</code></pre>
+<p>其他</p>
+<ul>
+<li><a href="http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/" class="uri">http://blog.apiaxle.com/post/handy-git-tips-to-stop-you-getting-fired/</a></li>
+</ul>
+<h1 id="github">23. 怎样下载一个github仓库中的特定目录？</h1>
+<p>例如：</p>
+<pre class="shell"><code>svn checkout https://github.com/flazz/vim-colorschemes/trunk/colors/</code></pre>
+<p>其中<code>trunk</code>对应github的<code>master</code>分支。</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo" class="uri">https://stackoverflow.com/questions/7106012/download-a-single-folder-or-directory-from-a-github-repo</a></li>
+</ul>
+<h1 id="commitauthor">24. 修改某次commit的author信息</h1>
+<pre class="shell"><code>git commit --amend --author=&quot;Author Name &lt;email@address.com&gt;&quot;</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/3042437/change-commit-author-at-one-specific-commit" class="uri">http://stackoverflow.com/questions/3042437/change-commit-author-at-one-specific-commit</a></li>
+</ul>
+<h1 id="new-folder-not-show-in-git-status">25. 不能添加文件夹（new folder not show in git status）</h1>
+<pre class="shell"><code>git status --ignored
+git add --force folder</code></pre>
+<ul>
+<li><a href="http://superuser.com/questions/583673/cant-add-folder-in-git" class="uri">http://superuser.com/questions/583673/cant-add-folder-in-git</a></li>
+</ul>
+<h1 id="git">26. git查看要提交的内容</h1>
+<pre class="shell"><code>git diff --stat --cached [remote/branch]
+git diff [remote repo/branch]
+git diff --numstat [remote repo/branch]
+git push --dry-run</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/3636914/how-can-i-see-what-i-am-about-to-push-with-git" class="uri">http://stackoverflow.com/questions/3636914/how-can-i-see-what-i-am-about-to-push-with-git</a></li>
+</ul>
+<h1 id="git">27. git撤销即将提交的修改</h1>
+<pre class="shell"><code>git reset --hard [remote branch]</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/3882583/how-to-discard-local-commits-in-git" class="uri">http://stackoverflow.com/questions/3882583/how-to-discard-local-commits-in-git</a></li>
+</ul>
+<h1 id="git-ignore">28. 设置<code>git ignore</code>核心文件</h1>
+<pre class="shell"><code>git config --global core.excludesfile &#39;~/.gitignore&#39;</code></pre>
+<ul>
+<li><a href="http://stackoverflow.com/questions/7335420/global-git-ignore" class="uri">http://stackoverflow.com/questions/7335420/global-git-ignore</a></li>
+</ul>
+<h1 id="gitlabgithub">28. 快速打开当前目录的gitlab或者github链接</h1>
 <p>首先在<code>~/.gitconfig</code>中配置如下<code>alias</code>：</p>
-<pre><code>[alias]
-  url =! bash -c 'git config --get remote.origin.url | sed -E "s/.+:\\(.+\\)\\.git$/https:\\\\/\\\\/github\\\\.com\\\\/\\\\1/g"'
-</code></pre>
+<pre class="config"><code>[alias]
+  url =! bash -c &#39;git config --get remote.origin.url | sed -E &quot;s/.+:\\(.+\\)\\.git$/https:\\\\/\\\\/github\\\\.com\\\\/\\\\1/g&quot;&#39;</code></pre>
 <p>这样使用<code>git url</code>就可以看到仓库的http地址了。</p>
-<p>打开的话就只需要执行<code>git url | xargs open</code>或者：</p>
-<pre><code>open `git url`
-</code></pre>
+<p>打开的话就只需要执行git url | xargs open或者：</p>
+<pre class="shell"><code>open `git url`</code></pre>
 <p>即可。</p>
-<h3>fatal: Could not open file .git/rebase-merge/done for reading: No such file or directory</h3>
-<ol start="30">
-<li>修改commit信息</li>
-</ol>
+<h1 id="fatal-could-not-open-file-.gitrebase-mergedone-for-reading-no-such-file-or-directory">29. <code>fatal: Could not open file .git/rebase-merge/done for reading: No such file or directory</code></h1>
+<pre class="shell"><code>git rebase --abort</code></pre>
+<ul>
+<li><a href="https://stackoverflow.com/questions/38793538/fatal-could-not-open-file-git-rebase-merge-done-for-reading-no-such-file-or-d" class="uri">https://stackoverflow.com/questions/38793538/fatal-could-not-open-file-git-rebase-merge-done-for-reading-no-such-file-or-d</a></li>
+</ul>
+<h1 id="commit">30. 修改commit信息</h1>
 <p>未提交：</p>
-<p><code>git commit --amend -m'xxxx'</code></p>
-<p><a href="https://help.github.com/articles/changing-a-commit-message/">https://help.github.com/articles/changing-a-commit-message/</a></p>
+<pre class="shell"><code>git commit --amend -m&#39;xxxx&#39;</code></pre>
+<ul>
+<li><a href="https://help.github.com/articles/changing-a-commit-message/" class="uri">https://help.github.com/articles/changing-a-commit-message/</a></li>
+</ul>
 <p>已提交：</p>
-<p><code>git rebase -i HEAD~n</code></p>
-<p><code>git push --force</code></p>
-<ol start="31">
-<li><code>.git</code>目录</li>
-</ol>
-<p><code>git cat-file -p xxxhashvalue</code></p>
-<p><code>.git/objects</code>目录保存了每次commit的信息
-<code>.git/refs</code>目录保存了仓库的分支信息</p>
+<pre class="shell"><code>git rebase -i HEAD~n
+git push --force</code></pre>
+<h1 id=".git">31. 了解<code>.git</code>目录</h1>
+<pre class="shell"><code>git cat-file -p xxxhashvalue</code></pre>
+<p><code>.git/objects</code>目录保存了每次commit的信息 <code>.git/refs</code>目录保存了仓库的分支信息</p>
 <ul>
-<li><a href="https://medium.com/@pierreda/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807#.ib62a4g3b">https://medium.com/@pierreda/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807#.ib62a4g3b</a></li>
+<li><a href="https://medium.com/@pierreda/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807#.ib62a4g3b" class="uri">https://medium.com/@pierreda/understanding-git-for-real-by-exploring-the-git-directory-1e079c15b807#.ib62a4g3b</a></li>
 </ul>
-<ol start="32">
-<li>git原理：git对象（git internals-git objects）</li>
-</ol>
+<h1 id="gitgitgit-internals-git-objects">32. git原理：git对象（git internals-git objects）</h1>
 <p>Git is essentially a simple key-value data store.</p>
-<p><code>find .git/objects -type f</code>
-<code>echo 'test content' | git hash-object -w --stdin</code>
-<code>git cat-file -p xxxxhashvalue</code></p>
+<pre class="shell"><code>find .git/objects -type f echo &#39;test content&#39; | git hash-object -w --stdin git cat-file -p xxxxhashvalue</code></pre>
 <ul>
-<li><a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects">https://git-scm.com/book/en/v2/Git-Internals-Git-Objects</a></li>
+<li><a href="https://git-scm.com/book/en/v2/Git-Internals-Git-Objects" class="uri">https://git-scm.com/book/en/v2/Git-Internals-Git-Objects</a></li>
 </ul>
-<ol start="32">
-<li>查看提交日志</li>
-</ol>
-<p><code>git log --pretty=format:"[%h] %ae, %ar: %s" --stat</code></p>
-<blockquote>
-<p>其中格式字符串的含义分别为：<code>%h</code>表示提交记录的 hash 值；<code>%ae</code>表示提交者的邮箱信息；<code>%ar</code>表示提交时间；<code>%s</code>表示提交日志信息。
-<code>git log</code>格式的详细信息可以通过<code>git help log</code>然后搜索<code>placeholder</code>查看。</p>
-</blockquote>
-<ol start="33">
-<li>快速编辑修改过的文件</li>
-</ol>
-<pre><code>vim -p `git log --name-only`
-</code></pre>
-<ol start="34">
-<li>快速比较两个分支同一个文件的不同</li>
-</ol>
-<pre><code>git diff mybranch..master -- myfile.cs
-git diff mybranch master -- myfile.cs
-</code></pre>
+<h1>33. 查看提交日志</h1>
+<pre class="shell"><code>git log --pretty=format:&quot;[%h] %ae, %ar: %s&quot; --stat</code></pre>
+<p>其中格式字符串的含义分别为：<code>%h</code>表示提交记录的 hash 值；<code>%ae</code>表示提交者的邮箱信息；<code>%ar</code>表示提交时间；<code>%s</code>表示提交日志信息。 <code>git log</code>格式的详细信息可以通过<code>git help log</code>然后搜索<code>placeholder</code>查看。</p>
+<h1>33. 快速编辑修改过的文件</h1>
+<pre class="shell"><code>vim -p `git log --name-only`</code></pre>
+<h1>34. 快速比较两个分支同一个文件的不同</h1>
+<pre class="shell"><code>git diff mybranch..master -- myfile.cs
+git diff mybranch master -- myfile.cs</code></pre>
 <ul>
-<li><a href="http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches">http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></li>
+<li><a href="http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches" class="uri">http://stackoverflow.com/questions/4099742/how-can-i-compare-files-from-two-different-branches</a></li>
 </ul>
-<ol start="35">
-<li>git merge 的标记说明</li>
-</ol>
+<h1 id="git-merge">35. <code>git merge</code>的标记说明</h1>
 <ul>
-<li><a href="http://stackoverflow.com/questions/7901864/git-conflict-markers">http://stackoverflow.com/questions/7901864/git-conflict-markers</a></li>
+<li><a href="http://stackoverflow.com/questions/7901864/git-conflict-markers" class="uri">http://stackoverflow.com/questions/7901864/git-conflict-markers</a></li>
 </ul>
-<ol start="36">
-<li>合并多个 commit</li>
-</ol>
-<pre><code>git rebase --interactive HEAD~2
-</code></pre>
-<p>在打开的编辑窗口中将多次 commit 的信息修改成<code>squash</code></p>
-<ol start="37">
-<li>查看某个文件的commit信息</li>
-</ol>
-<p><code>git shortlog -n -s &lt;file_name&gt;</code></p>
-</article>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-</body><div></div></html>
+<h1 id="-commit">36. 合并多个 commit</h1>
+<pre class="shell"><code>git rebase --interactive HEAD~2</code></pre>
+<p>在打开的编辑窗口中将多次<code>commit</code>的信息修改成<code>squash</code></p>
+<h1 id="commit">37. 查看某个文件的commit信息</h1>
+<pre><code>git shortlog -n -s &lt;file_name&gt;</code></pre>
+</body>
+</html>
