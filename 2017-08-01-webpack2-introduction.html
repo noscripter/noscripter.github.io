@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    <link rel="stylesheet" type="text/css" href="./css/github-syntax-highlight.css">
+    <link rel="stylesheet" type="text/css" href="./css/github-markdown.css">
+    <style>
+      .markdown-body {
+        min-width: 200px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <div class="repository-with-sidebar repo-container new-discussion-timeline with-full-navigation">
+          <div id="js-repo-pjax-container" class="repository-content context-loader-container">
+            <div id="readme" class="boxed-group flush clearfix announce instapaper_body md">
+              <article class="markdown-body">
+                <h2>webpack 快速学习笔记</h2>
+                <h3>基础概念</h3>
+                <p>三个基础概念</p>
+                <ul>
+                  <li>entry：入口文件设置</li>
+                  <li>output：输出文件设置</li>
+                  <li>loader：文件转换设置</li>
+                  <li>plugin：完成文件转换的模块</li>
+                </ul>
+                <h3>entry 具体设置</h3>
+                <p><code>entry</code>有两种语法格式：</p>
+                <ul>
+                  <li>字符串（字符串数组）格式
+                    <pre><code class="language-javascript"><span class="hljs-comment">// 字符串格式</span>
+<span class="hljs-keyword">const</span> config = {
+  entry: <span class="hljs-string">'./path/to/entryfile.js'</span>
+};
+<span class="hljs-comment">// 字符串数组格式</span>
+<span class="hljs-keyword">const</span> config = {
+  entry: [
+    <span class="hljs-string">'./path/to/entry1.js'</span>,
+    <span class="hljs-string">'./path/to/entry2.js'</span>,
+  ]
+};
+</code></pre>
+                  </li>
+                  <li>对象格式
+                    <pre><code class="language-javascript"><span class="hljs-keyword">const</span> config = {
+  entry: {
+    app: <span class="hljs-string">'./src/app.js'</span>,
+    vendor1: <span class="hljs-string">'./src/vendor1.js'</span>,
+    vendors: [
+      <span class="hljs-string">'./src/vendor2.js'</span>,
+      <span class="hljs-string">'./src/vendor3.js'</span>
+    ]
+  }
+};
+</code></pre>
+                  </li>
+                </ul>
+                <p>字符串数组或有多个属性的对象表示多个入口文件。</p>
+                <p>一个 HTML 页面只能有一个入口文件。</p>
+                <h3>output 具体设置</h3>
+                <p>webpack 配置 entry 可以有多个值，但 output 只能指定一个具体的配置。</p>
+                <p>output 配置至少要包含两个值：</p>
+                <ul>
+                  <li><code>filename</code>：指定输出文件名</li>
+                  <li><code>path</code>：输出目录的绝对路径</li>
+                </ul>
+                <p>例如：</p>
+                <pre><code class="language-javascript"><span class="hljs-keyword">const</span> config = {
+  output: {
+    filename: <span class="hljs-string">'bundle.js'</span>,
+    path: <span class="hljs-string">'/home/admin/project/build/'</span>
+  }
+};
+</code></pre>
+                <p>上面的 output 配置会把文件输出到：<code>/home/admin/project/build/bundle.js</code>。</p>
+                <p>多个入口文件可以输出到入口文件对应的输出文件：</p>
+                <pre><code class="language-javascript">{
+  entry: {
+    app: <span class="hljs-string">'./src/app.js'</span>,
+    vendor: <span class="hljs-string">'./src/vendor.js'</span>,
+  },
+  output: {
+    filename: <span class="hljs-string">'[name].js'</span>,
+    path: __dirname + <span class="hljs-string">'/dist'</span>,
+  }
+}
+</code></pre>
+                <p><code>[name]</code>是用于输出文件替换的模板变量，webpack 支持的 output 替换模板变量如下表所示：</p>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>模板变量</th>
+                      <th>描述</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>[hash]</code></td>
+                      <td>模块标识符 hash 值</td>
+                    </tr>
+                    <tr>
+                      <td><code>[chunkhash]</code></td>
+                      <td>片段内容 hash 值</td>
+                    </tr>
+                    <tr>
+                      <td><code>[name]</code></td>
+                      <td>模块名</td>
+                    </tr>
+                    <tr>
+                      <td><code>[id]</code></td>
+                      <td>模块标识符</td>
+                    </tr>
+                    <tr>
+                      <td><code>[file]</code></td>
+                      <td>模块文件名</td>
+                    </tr>
+                    <tr>
+                      <td><code>[filebase]</code></td>
+                      <td>模块<code>basename</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>[query]</code></td>
+                      <td>模块查询字符串，例如跟在文件名<code>?</code>后面的字符串</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <h3>loader 具体配置</h3>
+                <p>loader 用于指定模块源码的转换配置。</p>
+                <p>loader 配置相当于其他构建工具中的任务配置，例如<code>import</code>或者加载文件时的预处理任务、将其他语言（例如
+                  TypeScript）转换为 JavaScript 的任务、甚至是从 JavaScript 模块直接加载 CSS 文件的任务等。</p>
+                <p>示例：</p>
+                <pre><code class="language-javascript"><span class="hljs-comment">// webpack.config.js</span>
+<span class="hljs-built_in">module</span>.exports = {
+  <span class="hljs-built_in">module</span>: {
+    rules: [
+      { test: <span class="hljs-regexp">/\.css$/</span>, use: <span class="hljs-string">'css-loader'</span> },
+      { test: <span class="hljs-regexp">/\.ts$/</span>, use: <span class="hljs-string">'ts-loader'</span> }
+    ]
+  }
+};
+</code></pre>
+                <p>这个任务配置依赖两个 loader 模块：<code>css-loader</code>和<code>ts-loader</code>。</p>
+                <p>第一条规则表示：使用<code>css-loader</code>处理所有<code>css</code>文件。</p>
+                <p>第二条规则表示：使用<code>ts-loader</code>模块处理所有<code>ts</code>文件。</p>
+                <p>注意：loader 配置放在<code>module.rules</code>字段里。</p>
+                <p>对于<code>test</code>规则匹配到的文件类型可以指定多个 loader 来处理，配置示例：</p>
+                <pre><code class="language-javascript"><span class="hljs-built_in">module</span>: {
+  rules: [
+    {
+      test: <span class="hljs-regexp">/\.css$/</span>,
+      use: [
+        { loader: <span class="hljs-string">'style-loader'</span> },
+        {
+          loader: <span class="hljs-string">'css-loader'</span>,
+          options: {
+            modules: <span class="hljs-literal">true</span>
+          }
+        }
+      ]
+    }
+  ]
+}
+</code></pre>
+                <p>loader 还有内联和命令行用法，但不推荐使用，可能会造成调试的困难。</p>
+                <blockquote>
+                  <p><a href="https://webpack.js.org/concepts/loaders/#inline">内联</a>
+                    <a href="https://webpack.js.org/concepts/loaders/#cli">命令行</a></p>
+                </blockquote>
+                <p>需要记住 loader 的特点：</p>
+                <ul>
+                  <li>loader 可以链式调用。链式调用的结果按照 loader 的顺序传递。最后一个 loader 接收的内容必须是 JavaScript。</li>
+                  <li>loader 可以是同步的，也可以是异步的。</li>
+                  <li>loader 在 node.js 环境中运行（可以使用 node.js 提供的所有 API）。</li>
+                  <li>loader 接受查询参数，可以将配置作为查询参数传递给 loader（ 即内联 loader 的用法）。</li>
+                  <li>可以通过<code>option</code>对象来配置 loader。</li>
+                </ul>
+                <p>简而言之， loader 可以用来完成文件转换、预处理和后处理等任务，关于 loader 的详情可以参考下面的链接。</p>
+                <blockquote>
+                  <p><a href="https://webpack.js.org/development/how-to-write-a-loader/">https://webpack.js.org/development/how-to-write-a-loader/</a></p>
+                </blockquote>
+                <h3>plugin</h3>
+                <p>webpack 本身就是基于插件系统构建的。</p>
+                <p>webpack 插件是一个带有<code>apply</code>属性的 JavaScript 对象。</p>
+                <pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">ConsoleLogOnBuildWebpackPlugin</span>(<span class="hljs-params"></span>) </span>{
+}
+
+ConsoleLogOnBuildWebpackPlugin.prototype.apply = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">compiler</span>) </span>{
+  compiler.plugin(<span class="hljs-string">'run'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">compiler, callback</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'The webpack build process is starting!!'</span>);
+
+    callback();
+  });
+};
+</code></pre>
+                <p>另一种通过 API 来调用 plugin 的方式：</p>
+                <pre><code class="language-javascript"><span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">'webpack'</span>);
+<span class="hljs-keyword">const</span> configuration = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./webpack.config.js'</span>);
+
+<span class="hljs-keyword">const</span> compiler = webpack(configuration);
+compiler.apply(<span class="hljs-keyword">new</span> webpack.ProgressPlugin());
+
+compiler.run(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, stats</span>) </span>{
+  <span class="hljs-comment">// ...</span>
+});
+</code></pre>
+                <h3>模块</h3>
+                <p>node.js 天生支持模块系统， webpack 运行在 node.js 运行时环境，自然也支持 CommonJS 模块系统。除此之外，
+                  webpack 还支持下列模块系统：</p>
+                <ul>
+                  <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import">ES2015</a>                    <code>import</code> 声明</li>
+                  <li><a href="http://www.commonjs.org/specs/modules/1.0/">CommonJS</a>                    <code>requrie</code> 声明</li>
+                  <li><a href="https://github.com/amdjs/amdjs-api/blob/master/AMD.md">AMD</a>                    的 <code>define</code> 和 <code>require</code> 声明</li>
+                  <li>CSS、SASS、LESS 文件里的 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/@import"><code>@import</code></a>                    声明</li>
+                  <li>样式文件（<code>url(...)</code>）和 HTML 文件（<code>&lt;img src=...&gt;</code>）中的图片链接</li>
+                </ul>
+                <p>webpack 还支持通过 loader 来转换其他语言和预处理器，例如：</p>
+                <ul>
+                  <li><a href="http://coffeescript.org/">CoffeeScript</a></li>
+                  <li><a href="https://www.typescriptlang.org/">TypeScript</a></li>
+                  <li><a href="https://babeljs.io/">ESNext(Babel)</a></li>
+                  <li><a href="http://sass-lang.com/">Sass</a></li>
+                  <li><a href="http://lesscss.org/">Less</a></li>
+                  <li><a href="http://stylus-lang.com/">Stylus</a></li>
+                </ul>
+                <h3>resolver</h3>
+                <p>webpack resolver 负责通过路径来定位模块，支持：</p>
+                <ul>
+                  <li>绝对路径</li>
+                  <li>相对路径</li>
+                  <li>模块路径</li>
+                </ul>
+                <p>webpack 会在 <code>resolve.modules</code> 指定的所有目录里搜索模块。可以使用 <code>resolve.alias</code>                  来创建模块路径的别名。</p>
+                <p><code>resolve.extensions</code> 选项用于解析文件扩展， webpack 通过 <code>resolve.extensions</code>                  来确定解析哪些文件。</p>
+                <p><code>resolve.mainFields</code> 和 package.json 一起确定了模块的具体解析规则。</p>
+                <h3>manifest</h3>
+                <p>使用 webpack 构建的应用和站点主要包含三种类型的代码：</p>
+                <ol>
+                  <li>应用源码</li>
+                  <li>应用源码依赖的第三方代码（或者<code>vendor</code>代码）</li>
+                  <li>webpack 运行时以及控制所有模块交互的<code>manfiest</code></li>
+                </ol>
+                <p>webpack 通过 manfiest 数据来管理模块之间的交互。 manfiest 数据来自应用所有模块的入口、解析和映射关系信息。所有的<code>import</code>、<code>require</code>等模块声明都会被转换成<code>__webpack_require__</code>方法并指向模块标识符。通过
+                  manifest 数据， webpack 运行时可以定位到标识符对应的具体模块。</p>
+                <h3>target</h3>
+                <p><code>target</code> 字段决定了 webpack 的部署对象（node.js 还是浏览器），例如：</p>
+                <pre><code class="language-javascript"><span class="hljs-built_in">module</span>.exports = {
+  target: <span class="hljs-string">'node'</span>
+};
+</code></pre>
+                <p>除此之外， webpack 还支持 <a href="http://electron.atom.io/">electron</a>                  作为部署对象，详细 target 列表请参考<a href="https://webpack.js.org/configuration/target/">官方文档</a>。从源码我们可以看到支持如下部署对象：</p>
+                <ul>
+                  <li>web</li>
+                  <li>webworker</li>
+                  <li>node</li>
+                  <li>async-node</li>
+                  <li>node-webkit</li>
+                  <li>atom</li>
+                  <li>electron</li>
+                  <li>electron-main</li>
+                  <li>electron-renderer</li>
+                </ul>
+                <blockquote>
+                  <p><a href="https://github.com/webpack/webpack/blob/master/lib/WebpackOptionsApply.js#L70-L185">源码</a></p>
+                </blockquote>
+                <p>可以看到 target 不同， webpack 默认加载的 loader 不同。</p>
+                <p>一个使用 webpack 来同时打包面向 electron.js 和浏览器部署脚本的代码仓库示例：<a href="https://github.com/acao/webpack-web-and-electron-example">https://github.com/acao/webpack-web-and-electron-example</a></p>
+                <h3>Hot Module Replacement(HMR)</h3>
+                <p>热模块替换（HMR）指的是在应用运行的过程中替换、添加或者删除模块而不用全部重新加载，这样有几个优势：</p>
+                <ul>
+                  <li>应用没有全部重新加载，可以保持应用的状态</li>
+                  <li>通过只更新修改过的内容来节省开发时间</li>
+                  <li>样式调整速度更快——可以匹配在浏览器开发者工具里调整样式的速度</li>
+                </ul>
+                <p><strong>原理</strong></p>
+                <ul>
+                  <li>
+                    <p>应用端</p>
+                    <ul>
+                      <li>
+                        <p>应用查询 HMR 运行时是否有更新</p>
+                      </li>
+                      <li>
+                        <p>运行时异步下载更新并通知应用</p>
+                      </li>
+                      <li>
+                        <p>应用通知运行时应用更新</p>
+                      </li>
+                      <li>
+                        <p>运行时同步应用更新</p>
+                        <p>这个过程可以配置成让 HMR 自动处理或者需要用户交互才更新。</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <p>编译器端</p>
+                    <ul>
+                      <li>
+                        <p>编译器需要触发一个 <code>update</code> 事件来通知版本更新</p>
+                        <p>这个 <code>update</code> 事件需要包含两部分内容：</p>
+                        <ol>
+                          <li>更新过的<a href="https://webpack.js.org/concepts/manifest"><code>manifest</code></a>（JSON）</li>
+                          <li>一个或更多更新过的代码片段（JavaScript）</li>
+                        </ol>
+                        <p>manifest 文件包含新的编译 hash 值和所有更新过的代码片段的列表。这些代码片段包含所有更新过的模块的新代码（或者模块已经被删除的标记）。</p>
+                        <p>编译器会保证各个构建版本里的模块 ID 和代码片段 ID 都是一致的。这些 ID 一般是保存在内存里（例如：<a
+                            href="https://webpack.js.org/configuration/dev-server/">webpack-dev-server</a>）或者存储在一个
+                          JSON 文件里。</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <p>模块端</p>
+                    <ul>
+                      <li>
+                        <p>HMR 是一个可选特性，并且只会影响到包含 HMR 代码的模块。</p>
+                        <p>例如 <a href="https://github.com/webpack/style-loader">style-loader</a>                          支持样式热xixi修改就是通过实现 HMR 接口，并通过 HMR 来接受更新事件（<code>update</code>），然后使用新的样式来替换旧的样式实现的。</p>
+                        <p>也就是说，要想实现一个 HMR loader， 首先必须实现 HMR 接口，然后必须支持对<code>update</code>事件的响应，具体的模块处理、替换逻辑在<code>update</code>响应事件中实现。</p>
+                        <p>参考资料：<a href="https://webpack.js.org/api/hot-module-replacement">HMR API</a>。</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <p>运行时端</p>
+                    <ul>
+                      <li>
+                        <p>模块系统的运行时需要额外跟踪<code>parent</code>模块和<code>children</code>模块</p>
+                      </li>
+                      <li>
+                        <p>运行时的管理环境需要支持两个方法：<code>check</code>和<code>apply</code></p>
+                        <p><a href="https://webpack.js.org/concepts/hot-module-replacement/#in-the-runtime">运行时技术细节</a></p>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+                <h3>参考资料</h3>
+                <ul>
+                  <li><a href="https://medium.com/eventmobi/how-to-incrementally-switch-to-webpack-203a1b431f7a">https://medium.com/eventmobi/how-to-incrementally-switch-to-webpack-203a1b431f7a</a></li>
+                  <li><a href="https://medium.com/appifycanada/migrate-to-webpack-from-grunt-bower-legacy-build-system-344526f47873">https://medium.com/appifycanada/migrate-to-webpack-from-grunt-bower-legacy-build-system-344526f47873</a></li>
+                  <li><a href="https://advancedweb.hu/2016/02/02/the-first-steps-from-grunt-to-webpack/">https://advancedweb.hu/2016/02/02/the-first-steps-from-grunt-to-webpack/</a></li>
+                  <li><a href="http://softeng.oicr.on.ca/chang_wang/2017/01/03/Legacy-Build-Tool-Migration/">http://softeng.oicr.on.ca/chang_wang/2017/01/03/Legacy-Build-Tool-Migration/</a></li>
+                  <li><a href="https://blog.serverdensity.com/the-journey-to-webpack/">https://blog.serverdensity.com/the-journey-to-webpack/</a></li>
+                  <li><a href="https://medium.com/webpack/webpack-http-2-7083ec3f3ce6">webpack http2</a></li>
+                  <li><a href="https://medium.com/@ad_harmonium/build-to-both-electron-js-and-browser-targets-using-webpack-59266bdb76a">webpack target both electron.js and browsers</a></li>
+                  <li><a href="https://medium.com/webpack/predictable-long-term-caching-with-webpack-d3eee1d3fa31">webpack cache</a></li>
+                  <li><a href="https://survivejs.com/webpack/optimizing/separating-manifest/">webpack manifest</a></li>
+                  <li><a href="https://webpack.js.org/api/loaders/">webpack loader api</a></li>
+                  <li><a href="https://webpack.js.org/loaders/">webpack loader list</a></li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </body>
+
+</html>
