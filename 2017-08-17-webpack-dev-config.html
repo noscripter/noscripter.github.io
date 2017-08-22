@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Language" content="en">
+  <link rel="stylesheet" type="text/css" href="./css/github-syntax-highlight.css">
+  <link rel="stylesheet" type="text/css" href="./css/github-markdown.css">
+  <style>
+    .markdown-body {
+      min-width: 200px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="repository-with-sidebar repo-container new-discussion-timeline with-full-navigation">
+        <div id="js-repo-pjax-container" class="repository-content context-loader-container">
+          <div id="readme" class="boxed-group flush clearfix announce instapaper_body md">
+            <article class="markdown-body"><h2>webpack 工程化实践</h2>
+<blockquote>
+<p><a href="../2017-08-01-webpack2-introduction.html">预备知识：webpack 快速学习笔记</a></p>
+</blockquote>
+<p>首先定义一下需要使用 webpack 来完成的任务：</p>
+<ol>
+<li>支持本地调试；</li>
+<li>支持 jsx（需要用到 react）；</li>
+<li>支持各种样式文件（包括 CSS、LESS、SASS）；</li>
+<li>支持针对移动端和 PC 端分别打包。</li>
+</ol>
+<h3>准备工作</h3>
+<ol>
+<li>
+<p>生成项目 package.json 文件：<code>npm init</code>。</p>
+</li>
+<li>
+<p>生成 git 信息：<code>git init</code>。</p>
+<p>编辑 git 用户信息：<code>vim .git/config</code>，添加如下内容：</p>
+<pre><code class="language-config">[user]
+    name=noscripter
+    email=president@whitehouse.gov
+</code></pre>
+<p>添加远程分支信息：</p>
+<p><code>git remote add origin git@github:noscripter/webpack-demo.git</code></p>
+<p>添加 <code>.gitignore</code>，可以用<a href="https://www.gitignore.io/">gitignore.io</a>自动生成。</p>
+<p>推荐生成 node .gitignore：<a href="https://www.gitignore.io/api/node">https://www.gitignore.io/api/node</a></p>
+</li>
+<li>
+<p>安装 webpack 依赖：<code>npm i -D webpack</code>。</p>
+</li>
+<li>
+<p>创建源码目录：<code>mkdir src</code>。</p>
+</li>
+<li>
+<p>创建 PC 端入口文件：<code>touch src/pc.js</code>以及移动端入口文件<code>touch src/mobile.js</code>。</p>
+</li>
+</ol>
+<h3>支持本地调试</h3>
+<p>webpack 有三种方式可以自动监测代码修改：</p>
+<ol>
+<li>
+<p>webpack 的 watch 模式</p>
+<pre><code class="language-shell">webpack --watch
+</code></pre>
+<p>编辑 package.json 加入运行命令（添加如下内容）：</p>
+<pre><code class="language-javascript"><span class="hljs-string">"scripts"</span>: {
+  <span class="hljs-string">"watch"</span>: <span class="hljs-string">"webpack --watch"</span>
+}
+</code></pre>
+<ul>
+<li>优点：自动重新打包编译代码，不依赖其他模块</li>
+<li>缺点：浏览器不会自动刷新</li>
+</ul>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/package/webpack-dev-server">webpack-dev-server</a></p>
+<p>安装依赖：<code>npm i -D webpack-dev-server</code>。</p>
+<p>添加配置文件<code>webpack.config.js</code>：</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+<span class="hljs-keyword">const</span> HtmlWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'html-webpack-plugin'</span>);
+<span class="hljs-keyword">const</span> CleanWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'clean-webpack-plugin'</span>);
+
+<span class="hljs-built_in">module</span>.exports = {
+  entry: {
+    pc: <span class="hljs-string">'./src/pc.js'</span>,
+    mobile: <span class="hljs-string">'./src/mobile.js'</span>
+  },
+  devtool: <span class="hljs-string">'inline-source-map'</span>,
+  devServer: {
+    contentBase: <span class="hljs-string">'./src/'</span>
+  },
+  plugins: [
+    <span class="hljs-keyword">new</span> CleanWebpackPlugin([<span class="hljs-string">'build'</span>]),
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin({
+      title: <span class="hljs-string">'PC'</span>,
+      filename: <span class="hljs-string">'pc.html'</span>,
+      chunks: [<span class="hljs-string">'pc'</span>]
+    }),
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin({
+      title: <span class="hljs-string">'MOBILE'</span>,
+      chunks: [<span class="hljs-string">'mobile'</span>]
+    })
+  ],
+  output: {
+    filename: <span class="hljs-string">'[name].bundle.js'</span>,
+    path: path.resolve(__dirname, dest)
+  }
+};
+</code></pre>
+<p>依赖两个 webpack 插件：</p>
+<ul>
+<li><a href="https://www.npmjs.com/package/html-webpack-plugin">html-webpack-plugin</a>：<code>npm i -D html-webpack-plugin</code></li>
+<li><a href="https://www.npmjs.com/package/clean-webpack-plugin">clean-webpack-plugin</a>：<code>npm i -D clean-webpack-plugin</code></li>
+</ul>
+<p>为了看到效果，我们修改一下<code>src/pc.js</code>和<code>src/mobile.js</code>。分别输入：</p>
+<pre><code class="language-javascript"><span class="hljs-built_in">console</span>.log(<span class="hljs-string">'pc.js'</span>);
+</code></pre>
+<p>和</p>
+<pre><code class="language-javascript"><span class="hljs-built_in">console</span>.log(<span class="hljs-string">'mobile.js'</span>);
+</code></pre>
+<p>在 package.json 的<code>scripts</code>字段里加入：<code>"start": "webpack-dev-server --open"</code>。然后执行<code>npm run start</code>，默认会打开<code>index.html</code>，控制台会输出<code>mobile.js</code>。</p>
+<p><img src="https://img.alicdn.com/tfs/TB1iHyySVXXXXaYXFXXXXXXXXXX-2034-1982.png" alt=""></p>
+<p>要完成我们的需求，这个默认页面当然不行，我们需要定制分别用于 PC 和 Mobile 调试的页面，这可以通过 html-webpack-plugin 的模板功能来实现。</p>
+<p>html-webpack-plugin 默认支持 <a href="https://github.com/tj/ejs">ejs</a> 模板，先需要安装依赖：<code>npm i -D ejs-loader</code>：</p>
+<p>然后修改 webpack.config.js：</p>
+<pre><code class="language-javascript"><span class="hljs-built_in">module</span>.exports = {
+  entry: {
+      pc: <span class="hljs-string">'./src/pc.js'</span>,
+      mobile: <span class="hljs-string">'./src/mobile.js'</span>
+  },
+  devtool: <span class="hljs-string">'inline-source-map'</span>,
+  devServer: {
+      contentBase: <span class="hljs-string">'./src/'</span>
+  },
+  output: {
+      filename: <span class="hljs-string">'[name].bundle.js'</span>,
+      path: path.resolve(__dirname, dest)
+  },
+  <span class="hljs-built_in">module</span>: {
+      rules: [
+      {
+          test: <span class="hljs-regexp">/\.(html|xtpl)$/</span>,
+          use: [
+          {
+              loader: <span class="hljs-string">'xtemplate-loader'</span>
+          }
+          ]
+      },
+      {
+          test: <span class="hljs-regexp">/\.ejs$/</span>,
+          use: [
+          {
+              loader: <span class="hljs-string">'ejs-loader'</span>
+          }
+          ]
+      }
+      ]
+  },
+  plugins: [
+      <span class="hljs-keyword">new</span> CleanWebpackPlugin([<span class="hljs-string">'build'</span>]),
+      <span class="hljs-keyword">new</span> HtmlWebpackPlugin({
+      title: <span class="hljs-string">'PC'</span>,
+      filename: <span class="hljs-string">'pc.html'</span>,
+      files: {
+          js: <span class="hljs-string">'build/pc.js'</span>
+      },
+      chunks: [<span class="hljs-string">'pc'</span>],
+      template: <span class="hljs-string">'src/pc.ejs'</span>
+      }),
+      <span class="hljs-keyword">new</span> HtmlWebpackPlugin({
+      title: <span class="hljs-string">'MOBILE'</span>,
+      files: {
+          js: <span class="hljs-string">'build/mobile.bundle.js'</span>
+      },
+      <span class="hljs-comment">// filename by default 'index.html'</span>
+      chunks: [<span class="hljs-string">'mobile'</span>],
+      template: <span class="hljs-string">'src/mobile.ejs'</span>
+      })
+  ],
+};
+</code></pre>
+<p>添加 PC 端（<code>src/pc.ejs</code>）和 mobile 端（<code>src/mobile.ejs</code>）调试用到的页面模板文件：</p>
+<ul>
+<li><code>src/pc.ejs</code></li>
+</ul>
+<pre><code class="language-html"><span class="hljs-doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">html</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">charset</span>=<span class="hljs-value">"utf-8"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">http-equiv</span>=<span class="hljs-value">"X-UA-Compatible"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"IE=edge,chrome=1"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">title</span>&gt;</span>PC<span class="hljs-tag">&lt;/<span class="hljs-title">title</span>&gt;</span>
+    <span class="hljs-comment">&lt;!--[if lt IE 9]&gt;
+    &lt;script&gt;location.href = "//www.taobao.com/markets/tbhome/ali-page-updater"; &lt;/script&gt;
+    &lt;![endif]--&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"container"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"//g.alicdn.com/code/npm/??react/15.6.1/dist/react-with-addons.js,react-dom/15.6.1/dist/react-dom.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">html</span>&gt;</span>
+</code></pre>
+<ul>
+<li><code>src/mobile.ejs</code></li>
+</ul>
+<pre><code class="language-html"><span class="hljs-doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">html</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">charset</span>=<span class="hljs-value">"utf-8"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">http-equiv</span>=<span class="hljs-value">"X-UA-Compatible"</span> <span class="hljs-attribute">content</span>=<span class="hljs-value">"IE=edge,chrome=1"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">title</span>&gt;</span>MOBILE<span class="hljs-tag">&lt;/<span class="hljs-title">title</span>&gt;</span>
+    <span class="hljs-comment">&lt;!--[if lt IE 9]&gt;
+    &lt;script&gt;location.href = "//www.taobao.com/markets/tbhome/ali-page-updater"; &lt;/script&gt;
+    &lt;![endif]--&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"container"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"//g.alicdn.com/code/npm/??react/15.6.1/dist/react-with-addons.js,react-dom/15.6.1/dist/react-dom.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">%</span> <span class="hljs-attribute">htmlWebpackPlugin.files.js</span> %&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">html</span>&gt;</span>
+</code></pre>
+<p>注意这两个模板文件的不同， mobile 版本用到了 ejs 变量，这个变量是 html-webpack-plugin 注入的。</p>
+<blockquote>
+<p><a href="https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates">html-webpack-plugin 模板变量详情</a>
+<a href="https://webpack.js.org/configuration/dev-server/">webpack-dev-server 更详情的配置</a></p>
+</blockquote>
+<p><strong><a href="https://webpack.js.org/guides/hot-module-replacement/">HMR(Hot Module Replacement， 热模块替换)</a></strong></p>
+<p>在 webpack.config.js 中，为 devServer 字段加上一个<code>hot: true</code>字段，并在 plugins 字段中加上<code>new webpack.HotModuleReplacementPlugin()</code>。</p>
+<blockquote>
+<p>如果使用 webpack-dev-middleware 开发，要想启用 HMR，必须用到<a href="https://github.com/glenjamin/webpack-hot-middleware">webpack-hot-middleware</a>模块。</p>
+</blockquote>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/package/webpack-dev-middleware">webpack-dev-middleware</a></p>
+<p>webpack-dev-server 内置了 webpack-dev-middleware 来支持将 webpack 编译好的文件输出到服务器。也可以单独使用 webpack-dev-middleware 来做更多的定制。</p>
+<blockquote>
+<p>参考：<a href="https://webpack.js.org/guides/development/#choosing-a-development-tool">https://webpack.js.org/guides/development/#choosing-a-development-tool</a></p>
+</blockquote>
+</li>
+<li>
+<p>eslint 代码检查</p>
+<p>创建 .eslintrc.js 文件，可以基于安装的具体配置文件来扩展。</p>
+<blockquote>
+<p><a href="http://eslint.org/docs/user-guide/configuring">http://eslint.org/docs/user-guide/configuring</a></p>
+</blockquote>
+<p>安装依赖，依赖分为两种，一种是 eslint plugin，一种是 eslint 配置。</p>
+<ul>
+<li><a href="http://eslint.org/docs/developer-guide/working-with-plugins">eslint plugin</a>：扩展 eslint 功能，自定义检查操作。
+<ul>
+<li><a href="https://github.com/dustinspecker/awesome-eslint#plugins">https://github.com/dustinspecker/awesome-eslint#plugins</a></li>
+</ul>
+</li>
+<li><a href="">eslint 配置</a>：eslint 推荐配置，也就是总结出来的一些最佳实践。比如：
+<ul>
+<li><a href="https://www.npmjs.com/package/eslint-config-airbnb">https://www.npmjs.com/package/eslint-config-airbnb</a></li>
+<li><a href="https://github.com/standard/eslint-config-standard">https://github.com/standard/eslint-config-standard</a></li>
+<li><a href="https://github.com/google/eslint-config-google">https://github.com/google/eslint-config-google</a></li>
+<li><a href="https://github.com/dustinspecker/awesome-eslint#configs">https://github.com/dustinspecker/awesome-eslint#configs</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>参考：<a href="https://github.com/dustinspecker/awesome-eslint">https://github.com/dustinspecker/awesome-eslint</a></p>
+</blockquote>
+<p>配置 npm script，修改 package.json ，给 scripts 字段添加下面的内容：</p>
+<pre><code class="language-json">{
+  "<span class="hljs-attribute">lint</span>": <span class="hljs-value"><span class="hljs-string">"./node_modules/.bin/eslint ./src"</span></span>,
+  "<span class="hljs-attribute">fix</span>": <span class="hljs-value"><span class="hljs-string">"./node_modules/.bin/eslint --rule 'no-debugger: error' --rule 'no-console:error' --fix 'src/**/*.js' --quiet"</span>
+</span>}
+</code></pre>
+<p>添加 eslint 检查需要忽略的文件：<code>touch .eslintignore</code>，添加内容：</p>
+<pre><code># 忽略目录
+build/
+tests/
+demo/
+
+# node 覆盖率文件
+coverage/
+
+# 忽略文件
+**/*-min.js
+**/*.min.js
+</code></pre>
+</li>
+<li>
+<p>代码提交检查</p>
+<blockquote>
+<p>添加 precommit，在提交代码前自动检查是否通过 eslint 检查。</p>
+</blockquote>
+<p>安装依赖：<code>npm install -D pre-commit</code>。</p>
+<blockquote>
+<p><a href="https://github.com/observing/pre-commit">pre-commit</a></p>
+</blockquote>
+<p>配置 precommit 时执行的任务，在 package.json 中添加如下字段：</p>
+<pre><code>"pre-commit": [
+    "fix"
+]
+</code></pre>
+<p>这里的 fix 就对应上面 eslint 配置时添加的 fix 任务。</p>
+</li>
+</ol>
+<h3>支持 React、JSX、 静态资源加载</h3>
+<ol>
+<li>
+<p>支持 React 和 JSX</p>
+<p>为了最好的 react 开发体验，我们的 webpack 配置需要支持 babel（ES 2015），需要支持 JSX，还要支持 React 模块的自动重新编译。</p>
+<p>明确了这几个需求，我们一一来看，首先是 babel 和 jsx 配置，可以参考下 react 的<a href="https://facebook.github.io/react/docs/installation.html#enabling-es6-and-jsx">官方文档</a>。</p>
+<p>要支持 es2015 需要添加 babel loader：</p>
+<pre><code>tnpm install --save-dev babel-loader babel-core babel-preset-env webpack
+</code></pre>
+<blockquote>
+<p>参考：<a href="https://github.com/babel/babel-loader">babel-loader</a></p>
+</blockquote>
+<p>安装特定的 babel plugin 来支持指定的 es2015 语法：</p>
+<pre><code>npm i -D babel-plugin-syntax-dynamic-import
+npm i -D babel-plugin-transform-decorators-legacy
+npm i -D babel-plugin-transform-class-properties
+npm i -D babel-plugin-transform-object-rest-spread
+npm i -D babel-plugin-transform-export-extensions
+npm i -D babel-plugin-transform-function-bind
+npm i -D babel-plugin-transform-class-properties
+</code></pre>
+</li>
+<li>
+<p>支持各种样式处理 loader 和静态资源 loader（主要是字体文件和图片文件），详细参考 webpack 官网指南即可，配置号以后的<code>webpack.config.js</code>文件内容为：</p>
+<pre><code class="language-javascript"><span class="hljs-pi">'use strict'</span>;
+
+<span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">'path'</span>);
+<span class="hljs-keyword">const</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">'webpack'</span>);
+<span class="hljs-keyword">const</span> HtmlWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'html-webpack-plugin'</span>);
+<span class="hljs-keyword">const</span> CleanWebpackPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'clean-webpack-plugin'</span>);
+<span class="hljs-keyword">const</span> ExtractTextPlugin = <span class="hljs-built_in">require</span>(<span class="hljs-string">'extract-text-webpack-plugin'</span>);
+<span class="hljs-keyword">const</span> dest = process.env.DEST || <span class="hljs-string">'build'</span>;
+<span class="hljs-keyword">const</span> port = process.env.PORT || <span class="hljs-string">'8080'</span>;
+
+<span class="hljs-built_in">module</span>.exports = {
+entry: {
+    pc: <span class="hljs-string">'./src/pc.js'</span>,
+    mobile: <span class="hljs-string">'./src/mobile.js'</span>
+},
+devtool: <span class="hljs-string">'inline-source-map'</span>,
+devServer: {
+    contentBase: <span class="hljs-string">'./src/'</span>,
+    <span class="hljs-comment">// enable HMR(Hot Module Replacement)</span>
+    hot: <span class="hljs-literal">true</span>,
+    port
+},
+output: {
+    filename: <span class="hljs-string">'[name].bundle.js'</span>,
+    path: path.resolve(__dirname, dest)
+},
+<span class="hljs-built_in">module</span>: {
+    rules: [
+    {
+        test: <span class="hljs-regexp">/\.(png|svg|jpg|gif)$/</span>,
+        use: [
+        {
+            loader: <span class="hljs-string">'file-loader'</span>
+        },
+        {
+            loader: <span class="hljs-string">'url-loader'</span>,
+            <span class="hljs-comment">// limit file size to 50k</span>
+            options: {
+            limit: <span class="hljs-number">50000</span>
+            }
+        }
+        ]
+    },
+    {
+        test: <span class="hljs-regexp">/\.(woff|woff2|eot|ttf|otf)/</span>,
+        use: <span class="hljs-string">'file-loader'</span>
+    },
+    {
+        test: <span class="hljs-regexp">/\.(html|xtpl)$/</span>,
+        use: [
+        {
+            loader: <span class="hljs-string">'xtemplate-loader'</span>
+        }
+        ]
+    },
+    {
+        test: <span class="hljs-regexp">/\.ejs$/</span>,
+        use: [
+        {
+            loader: <span class="hljs-string">'ejs-loader'</span>
+        }
+        ]
+    },
+    {
+        test: <span class="hljs-regexp">/\.css$/</span>,
+        use: ExtractTextPlugin.extract({
+        fallback: <span class="hljs-string">'style-loader'</span>,
+        use: <span class="hljs-string">'css-loader'</span>
+        })
+    },
+    {
+        test: <span class="hljs-regexp">/\.less$/</span>,
+        use: ExtractTextPlugin.extract({
+        fallback: <span class="hljs-string">'style-loader'</span>,
+        use: [<span class="hljs-string">'css-loader'</span>, <span class="hljs-string">'less-loader'</span>]
+        })
+    },
+    {
+        test: <span class="hljs-regexp">/\.scss$/</span>,
+        test: <span class="hljs-regexp">/\.css$/</span>,
+        use: ExtractTextPlugin.extract({
+        fallback: <span class="hljs-string">'style-loader'</span>,
+        use: [<span class="hljs-string">'css-loader'</span>, <span class="hljs-string">'sass-loader'</span>]
+        })
+    },
+    {
+        test: <span class="hljs-regexp">/\.js$/</span>,
+        exclude: <span class="hljs-regexp">/(node_modules|bower_components)/</span>,
+        use: {
+        loader: <span class="hljs-string">'babel-loader'</span>,
+        options: {
+            presets: [<span class="hljs-string">'env'</span>],
+            plugins: [
+            <span class="hljs-string">'syntax-dynamic-import'</span>,
+            <span class="hljs-string">'transform-decorators-legacy'</span>,
+            <span class="hljs-string">'transform-class-properties'</span>,
+            <span class="hljs-string">'transform-object-rest-spread'</span>,
+            <span class="hljs-string">'transform-export-extensions'</span>,
+            <span class="hljs-string">'transform-function-bind'</span>,
+            <span class="hljs-string">'transform-class-properties'</span>
+            ]
+        }
+        }
+    }
+    ]
+},
+plugins: [
+    <span class="hljs-keyword">new</span> webpack.HotModuleReplacementPlugin(),
+    <span class="hljs-keyword">new</span> CleanWebpackPlugin([<span class="hljs-string">'build'</span>]),
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin({
+    title: <span class="hljs-string">'PC'</span>,
+    filename: <span class="hljs-string">'pc.html'</span>,
+    chunks: [<span class="hljs-string">'pc'</span>],
+    template: <span class="hljs-string">'src/pc.ejs'</span>
+    }),
+    <span class="hljs-keyword">new</span> HtmlWebpackPlugin({
+    title: <span class="hljs-string">'MOBILE'</span>,
+    files: {
+        js: <span class="hljs-string">'build/mobile.bundle.js'</span>
+    },
+    <span class="hljs-comment">// filename by default 'index.html'</span>
+    chunks: [<span class="hljs-string">'mobile'</span>],
+    template: <span class="hljs-string">'src/mobile.ejs'</span>
+    }),
+    <span class="hljs-keyword">new</span> ExtractTextPlugin({
+    filename: <span class="hljs-string">'[name].css'</span>
+    })
+],
+};
+</code></pre>
+<p>需要安装的 loader：</p>
+<pre><code class="language-shell">npm i --save-dev clean-webpack-plugin
+npm i --save-dev compare-webpack-target-bundles
+npm i --save-dev extract-text-webpack-plugin
+npm i --save-dev html-webpack-plugin
+npm i --save-dev html-webpack-template
+npm i --save-dev image-webpack-loader
+npm i --save-dev static-site-generator-webpack-plugin
+npm i --save-dev uglifyjs-webpack-plugin
+npm i --save-dev webpack
+npm i --save-dev webpack-dev-middleware
+npm i --save-dev webpack-dev-server
+npm i --save-dev webpack-hot-middleware
+npm i --save-dev webpack-pwa
+npm i --save-dev webpack.js.org
+npm i --save-dev webpack-manifest-plugin
+</code></pre>
+</li>
+</ol>
+<h3>高级配置：数据请求、状态管理、 SPA 路由</h3>
+<ul>
+<li>路由：<a href="https://reacttraining.com/react-router/">react-router</a>
+<ul>
+<li>WEB 浏览器上使用<code>react-router-dom</code>模块</li>
+<li>原生应用使用<code>react-router-native</code>模块</li>
+<li>源码结构简述：
+<ul>
+<li><code>packages/react-router</code>是核心模块，重点看下这块源码即可</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据请求：<a href="https://github.github.io/fetch/">whatwg-fetch</a>
+<ul>
+<li><a href="https://stackoverflow.com/questions/35549547/what-is-the-difference-between-the-fetch-api-and-xmlhttprequest">https://stackoverflow.com/questions/35549547/what-is-the-difference-between-the-fetch-api-and-xmlhttprequest</a></li>
+</ul>
+</li>
+<li>状态管理：<a href="https://github.com/reactjs/react-redux">react-redux</a>
+<ul>
+<li>集中管理组件的<code>states</code>数据，当然也可以自己通过封装事件来实现。</li>
+</ul>
+</li>
+</ul>
+</article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</body>
