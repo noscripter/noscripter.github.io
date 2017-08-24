@@ -496,9 +496,77 @@ npm i --save-dev webpack-manifest-plugin
 <li>状态管理：<a href="https://github.com/reactjs/react-redux">react-redux</a>
 <ul>
 <li>集中管理组件的<code>states</code>数据，当然也可以自己通过封装事件来实现。</li>
+<li>参考：<a href="https://noscripter.github.io/2017-08-23-redux-intro.html">https://noscripter.github.io/2017-08-23-redux-intro.html</a></li>
 </ul>
 </li>
 </ul>
+<p>update：上面的配置在编译 react functional component 时会报错，可以添加如下插件，并修改 .babelrc 配置：</p>
+<h4>update（20170824）：</h4>
+<p>上面的配置在编译 react functional component 时会报错，可以添加如下插件，并修改 .babelrc 配置：</p>
+<pre><code class="language-shell">npm i -D babel-cli
+npm i -D babel-core
+npm i -D babel-eslint
+npm i -D babel-loader
+npm i -D babel-plugin-check-es2015-constants
+npm i -D babel-plugin-external-helpers
+npm i -D babel-plugin-syntax-dynamic-import
+npm i -D babel-plugin-syntax-trailing-function-commas
+npm i -D babel-plugin-transform-async-to-generator
+npm i -D babel-plugin-transform-class-properties
+npm i -D babel-plugin-transform-decorators-legacy
+npm i -D babel-plugin-transform-es2015-arrow-functions
+npm i -D babel-plugin-transform-es2015-block-scoped-functions
+npm i -D babel-plugin-transform-es2015-block-scoping
+npm i -D babel-plugin-transform-es2015-classes
+npm i -D babel-plugin-transform-es2015-computed-properties
+npm i -D babel-plugin-transform-es2015-destructuring
+npm i -D babel-plugin-transform-es2015-for-of
+npm i -D babel-plugin-transform-es2015-literals
+npm i -D babel-plugin-transform-es2015-modules-commonjs
+npm i -D babel-plugin-transform-es2015-object-super
+npm i -D babel-plugin-transform-es2015-parameters
+npm i -D babel-plugin-transform-es2015-shorthand-properties
+npm i -D babel-plugin-transform-es2015-spread
+npm i -D babel-plugin-transform-es2015-template-literals
+npm i -D babel-plugin-transform-es3-member-expression-literals
+npm i -D babel-plugin-transform-es3-property-literals
+npm i -D babel-plugin-transform-export-extensions
+npm i -D babel-plugin-transform-function-bind
+npm i -D babel-plugin-transform-object-rest-spread
+npm i -D babel-plugin-transform-react-jsx-source
+npm i -D babel-preset-env
+npm i -D babel-preset-react
+npm i -D babel-traverse
+</code></pre>
+<p>.babelrc 文件内容：</p>
+<pre><code class="language-json">{
+  "<span class="hljs-attribute">plugins</span>": <span class="hljs-value">[
+    <span class="hljs-string">"transform-class-properties"</span>,
+    <span class="hljs-string">"syntax-trailing-function-commas"</span>,
+    [<span class="hljs-string">"transform-object-rest-spread"</span>, { "<span class="hljs-attribute">useBuiltIns</span>": <span class="hljs-value"><span class="hljs-literal">true</span> </span>}],
+    <span class="hljs-string">"transform-es2015-template-literals"</span>,
+    <span class="hljs-string">"transform-es2015-literals"</span>,
+    <span class="hljs-string">"transform-es2015-arrow-functions"</span>,
+    <span class="hljs-string">"transform-es2015-block-scoped-functions"</span>,
+    [<span class="hljs-string">"transform-es2015-classes"</span>, { "<span class="hljs-attribute">loose</span>": <span class="hljs-value"><span class="hljs-literal">true</span> </span>}],
+    <span class="hljs-string">"transform-es2015-object-super"</span>,
+    <span class="hljs-string">"transform-es2015-shorthand-properties"</span>,
+    <span class="hljs-string">"transform-es2015-computed-properties"</span>,
+    <span class="hljs-string">"transform-es2015-for-of"</span>,
+    <span class="hljs-string">"check-es2015-constants"</span>,
+    [<span class="hljs-string">"transform-es2015-spread"</span>, { "<span class="hljs-attribute">loose</span>": <span class="hljs-value"><span class="hljs-literal">true</span> </span>}],
+    <span class="hljs-string">"transform-es2015-parameters"</span>,
+    [<span class="hljs-string">"transform-es2015-destructuring"</span>, { "<span class="hljs-attribute">loose</span>": <span class="hljs-value"><span class="hljs-literal">true</span> </span>}],
+    [<span class="hljs-string">"transform-es2015-block-scoping"</span>, { "<span class="hljs-attribute">throwIfClosureRequired</span>": <span class="hljs-value"><span class="hljs-literal">true</span> </span>}],
+    <span class="hljs-string">"transform-es3-member-expression-literals"</span>,
+    <span class="hljs-string">"transform-es3-property-literals"</span>
+  ]</span>,
+  "<span class="hljs-attribute">presets</span>": <span class="hljs-value">[
+    <span class="hljs-string">"react"</span>,
+    <span class="hljs-string">"env"</span>
+  ]
+</span>}
+</code></pre>
 </article>
           </div>
         </div>

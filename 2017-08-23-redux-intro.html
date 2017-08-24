@@ -22,13 +22,14 @@
           <div id="readme" class="boxed-group flush clearfix announce instapaper_body md">
             <article class="markdown-body"><h2>React 工程实践之 Redux 入门</h2>
 <h3>为什么要用 redux</h3>
-<ul>
+<ol>
 <li>使用对象来描述应用状态</li>
 <li>使用 pure function 来管理应用状态变化</li>
 <li>应用状态可回溯</li>
 <li>应用状态可预测</li>
-</ul>
+</ol>
 <p>总结一下，使用 redux 需要解决的是 React 应用中复杂状态管理的问题。</p>
+<p>上面提到的第 3 点和第 4 点可以帮助我们理清应用状态数据，并且可以方便地测试应用的各种状态。</p>
 <p><code>pure function</code>是满足下面两个条件的函数：</p>
 <ol>
 <li>输入相同参数总是得到相同的输出结果；</li>
@@ -128,6 +129,282 @@
 <h3>实践</h3>
 <p>了解上面这些基础概念了，let's get our hands dirty!</p>
 <p>示例：<a href="http://redux.js.org/docs/introduction/Examples.html">http://redux.js.org/docs/introduction/Examples.html</a></p>
+<h3>redux 里的关键对象</h3>
+<h5>Action</h5>
+<p><strong>Action</strong>：通过<code>store.dispatch</code>发送数据给 store 集中处理。</p>
+<ul>
+<li>
+<p>action 必须有<code>type</code>属性</p>
+</li>
+<li>
+<p>除了<code>type</code>属性， action 对象的其他字段都可以自定义</p>
+</li>
+<li>
+<p>通过<code>store.dispatch</code>方法把 action 发送给 store</p>
+</li>
+<li>
+<p><code>action</code>是改变<code>store</code>唯一方法</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> ADD_TODO = <span class="hljs-string">'ADD_TODO'</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> TOGGLE_TODO = <span class="hljs-string">'TOGGLE_TODO'</span>;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> SET_VISIBILITY_FILTER + <span class="hljs-string">'SET_VISIBILITY_FILTER'</span>;
+</code></pre>
+</li>
+</ul>
+<h5>Reducer</h5>
+<p><strong>Reducer</strong>：action 定义了变化的内容，reducer 则定义了变化的影响。</p>
+<ul>
+<li>使用 redux 会将应用的所有状态存储在一个对象里，在使用 redux 编写代码前我们需要想好应用的最小状态对象是什么样子</li>
+<li>reducer 函数的签名是：<code>(previousState, action) =&gt; newState</code></li>
+<li>reducer 函数必须为 pure function，禁止在 reducer 函数里做以下事情：
+<ul>
+<li>修改函数参数</li>
+<li>API 调用或者路由切换</li>
+<li>调用非 pure function， 例如<code>Date.now</code>或者<code>Math.random()</code></li>
+</ul>
+</li>
+</ul>
+<p>reducer 组合模式：</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">todos</span>(<span class="hljs-params">state = [], action</span>) </span>{
+  <span class="hljs-keyword">switch</span> (action.type) {
+    <span class="hljs-keyword">case</span> ADD_TODO:
+      <span class="hljs-keyword">return</span> [
+        ...state,
+        {
+          text: action.text,
+          completed: <span class="hljs-literal">false</span>
+        }
+      ]
+    <span class="hljs-keyword">case</span> TOGGLE_TODO:
+      <span class="hljs-keyword">return</span> state.map((todo, index) =&gt; {
+        <span class="hljs-keyword">if</span> (index === action.index) {
+          <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, todo, {
+            completed: !todo.completed
+          })
+        }
+        <span class="hljs-keyword">return</span> todo
+      })
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> state
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">todoApp</span>(<span class="hljs-params">state = initialState, action</span>) </span>{
+  <span class="hljs-keyword">switch</span> (action.type) {
+    <span class="hljs-keyword">case</span> SET_VISIBILITY_FILTER:
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state, {
+        visibilityFilter: action.filter
+      })
+    <span class="hljs-keyword">case</span> ADD_TODO:
+    <span class="hljs-keyword">case</span> TOGGLE_TODO:
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state, {
+        todos: todos(state.todos, action)
+      })
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> state
+  }
+}
+</code></pre>
+<p>组合之前：</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">todoApp</span>(<span class="hljs-params">state = initialState, action</span>) </span>{
+  <span class="hljs-keyword">switch</span> (action.type) {
+    <span class="hljs-keyword">case</span> SET_VISIBILITY_FILTER:
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state, {
+        visibilityFilter: action.filter
+      })
+    <span class="hljs-keyword">case</span> ADD_TODO:
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state, {
+        todos: [
+          ...state.todos,
+          {
+            text: action.text,
+            completed: <span class="hljs-literal">false</span>
+          }
+        ]
+      })
+    <span class="hljs-keyword">case</span> TOGGLE_TODO:
+      <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, state, {
+        todos: state.todos.map((todo, index) =&gt; {
+          <span class="hljs-keyword">if</span> (index === action.index) {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, todo, {
+              completed: !todo.completed
+            })
+          }
+          <span class="hljs-keyword">return</span> todo
+        })
+      })
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> state
+  }
+}
+</code></pre>
+<p>这个例子告诉我们， reducer 可以进行拆分，每个 reducer 只需要管理真个应用状态树中的一小部分状态。这样做带来的好处是数据处理逻辑会更加简单，数据拆分粒度也会变细。</p>
+<p>redux 提供了一个<code>combineReducers()</code>工具函数来组合 reducer 函数，例如：</p>
+<pre><code class="language-javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">todos</span>(<span class="hljs-params">state = [], action</span>) </span>{
+  <span class="hljs-keyword">switch</span> (action.type) {
+    <span class="hljs-keyword">case</span> ADD_TODO:
+      <span class="hljs-keyword">return</span> [
+        ...state,
+        {
+          text: action.text,
+          completed: <span class="hljs-literal">false</span>
+        }
+      ]
+    <span class="hljs-keyword">case</span> TOGGLE_TODO:
+      <span class="hljs-keyword">return</span> state.map((todo, index) =&gt; {
+        <span class="hljs-keyword">if</span> (index === action.index) {
+          <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.assign({}, todo, {
+            completed: !todo.completed
+          })
+        }
+        <span class="hljs-keyword">return</span> todo
+      })
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> state
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">visibilityFilter</span>(<span class="hljs-params">state = SHOW_ALL, action</span>) </span>{
+  <span class="hljs-keyword">switch</span> (action.type) {
+    <span class="hljs-keyword">case</span> SET_VISIBILITY_FILTER:
+      <span class="hljs-keyword">return</span> action.filter
+    <span class="hljs-keyword">default</span>:
+      <span class="hljs-keyword">return</span> state
+  }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">todoApp</span>(<span class="hljs-params">state = {}, action</span>) </span>{
+  <span class="hljs-keyword">return</span> {
+    visibilityFilter: visibilityFilter(state.visibilityFilter, action),
+    todos: todos(state.todos, action)
+  }
+}
+</code></pre>
+<p>可以使用<code>combineReducers()</code>函数改写成：</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { combineReducers } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>
+
+const todoApp = combineReducers({
+  visibilityFilter,
+  todos
+})
+
+export default todoApp
+</code></pre>
+<p>注意：<code>combineReducers()</code>方法接受的参数是一个对象，我们可以这样来用：</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { combineReducers } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+<span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> reducers <span class="hljs-keyword">from</span> <span class="hljs-string">'./reducers'</span>;
+
+<span class="hljs-keyword">const</span> todoApp = combineReducers(reducers);
+</code></pre>
+<h5>Store</h5>
+<p><strong>Store</strong>：<code>Action</code>描述了状态的改变，<code>Reducer</code>负责执行状态改变，<code>Store</code>负责把<code>Action</code>和<code>Reducer</code>连接起来。它具体做了如下事情：</p>
+<ul>
+<li>保存应用状态数据</li>
+<li>通过<code>getState()</code>方法来获取应用当前状态数据</li>
+<li>通过<code>dispatch(action)</code>方法来更新状态数据</li>
+<li>通过<code>subscribe(listener)</code>方法来注册监听器</li>
+<li>通过<code>subscribe(listener)</code>返回的函数来处理没有注册的监听器</li>
+</ul>
+<p>创建 store 的写法：</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { createStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+<span class="hljs-keyword">import</span> todoApp <span class="hljs-keyword">from</span> <span class="hljs-string">'./reducers'</span>;
+<span class="hljs-keyword">let</span> store = createStore(todoApp);
+</code></pre>
+<p><code>createStore</code>方法还接受一个可选的第二个参数，可以用这个参数来指定应用的初始状态数据。</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">let</span> store = createStore(todoApp, <span class="hljs-built_in">window</span>.STATE_FROM_SERVER);
+</code></pre>
+<p>通过<code>store</code>分发（dispatch）<code>action</code>，即使没有界面我们也可以单独测试应用的状态逻辑。</p>
+<pre><code class="language-javascript"><span class="hljs-keyword">import</span> {
+  addTodo,
+  toggleTodo,
+  setVisibilityFilter,
+  VisibilityFilters
+} <span class="hljs-keyword">from</span> <span class="hljs-string">'./actions'</span>
+
+// Log the initial state
+console.log(store.getState())
+
+// Every time the state changes, log it
+// Note that subscribe() returns a function for unregistering the listener
+let unsubscribe = store.subscribe(() =&gt;
+  console.log(store.getState())
+)
+
+// Dispatch some actions
+store.dispatch(addTodo(<span class="hljs-string">'Learn about actions'</span>))
+store.dispatch(addTodo(<span class="hljs-string">'Learn about reducers'</span>))
+store.dispatch(addTodo(<span class="hljs-string">'Learn about store'</span>))
+store.dispatch(toggleTodo(0))
+store.dispatch(toggleTodo(1))
+store.dispatch(setVisibilityFilter(VisibilityFilters.SHOW_COMPLETED))
+
+// Stop listening to state updates
+unsubscribe()
+</code></pre>
+<h3>数据流动</h3>
+<p>redux 实现了<strong>单向数据流动</strong>。redux 应用的数据会按照 4 个步骤流动：</p>
+<ol>
+<li><code>store.dispatch(action)</code></li>
+</ol>
+<p>可以从应用的任何地方分发<code>action</code>，包括组件、接口回调或者事务调度计划。</p>
+<ol start="2">
+<li>redux store 调用 reducer 函数</li>
+</ol>
+<p>store 会传递两个参数给 reducer 函数：当前状态数据、action 对象。</p>
+<ol start="3">
+<li>
+<p>根 reducer 会将所有子 reducer 输出的状态数据组合成一份状态数据。</p>
+</li>
+<li>
+<p>redux store 存储根 reducer 返回的完整状态数据。</p>
+</li>
+</ol>
+<p><code>store.subscribe(listener)</code>注册的所有函数都会被调用，监听器可以通过调用<code>store.getState()</code>方法来获取当前状态数据。</p>
+<h3>与 React 结合</h3>
+<p><strong>redux vs react-redux</strong></p>
+<table>
+<thead>
+<tr><th></th><th>展现组件</th><th>容器组件</th></tr>
+</thead>
+<tbody>
+<tr><td>用途</td><td>与展示相关（标记、样式）</td><td>与运行相关（数据获取、状态更新）</td></tr>
+<tr><td>与 redux 直接联系</td><td>否</td><td>是</td></tr>
+<tr><td>数据读取</td><td>从属性读取</td><td>订阅 redux 状态数据</td></tr>
+<tr><td>数据修改</td><td>调用属性回调函数</td><td>dispatch redux action</td></tr>
+<tr><td>写法</td><td>手写</td><td>一般由 react redux 生成</td></tr>
+</tbody>
+</table>
+<p><a href="https://github.com/reactjs/react-redux">react-redux</a> 提供了一个<code>connect</code>方法来自动生成『容器组件』，自动生成相比使用<code>store.subscribe()</code>来手动编写还有性能优势。</p>
+<p>再来回顾一下 redux 的数据流（这张图是我自己总结的，上面的 gif 图来自 redux 官方）：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1Bt.6XgMPMeJjy1XbXXcwxVXa-2032-1526.png" alt=""></p>
+<blockquote>
+<p>绿色连线和文字表示连接关系，黄色连线和文字表示数据流动。
+在没有使用 react-redux 的时候，我们需要通过组件的 props 来传递应用状态数据。</p>
+</blockquote>
+<p>涉及的几个关键 API：</p>
+<ul>
+<li><a href="http://redux.js.org/docs/api/createStore.html#createstorereducer-preloadedstate-enhancer">createStore</a></li>
+<li><a href="http://redux.js.org/docs/api/Store.html#dispatchaction">store.dispatch</a></li>
+<li><a href="http://redux.js.org/docs/api/Store.html#subscribe">store.subscribe</a></li>
+</ul>
+<p>使用 react-redux 我们多了一些内容：</p>
+<ul>
+<li><a href="http://redux.js.org/docs/basics/UsageWithReact.html#passing-the-store">provider</a>
+<ul>
+<li><a href="https://facebook.github.io/react/docs/context.html">react context</a></li>
+</ul>
+</li>
+<li>mapStateToProps</li>
+<li>mapDispatchToProps</li>
+</ul>
+<p>关于 react-redux， 我们团队的『叶斋』同学写了一篇很好的文章：</p>
+<ul>
+<li><a href="http://taobaofed.org/blog/2016/08/18/react-redux-connect/">http://taobaofed.org/blog/2016/08/18/react-redux-connect/</a></li>
+</ul>
+<p>这张图对 react-redux 的实现细节做了『较好』的说明，可以看看：</p>
+<p><img src="https://cloud.githubusercontent.com/assets/25932306/23173871/e21da3da-f85a-11e6-9129-021365791bdc.png" alt=""></p>
+<blockquote>
+<p><a href="https://github.com/reactjs/redux/issues/2254">来源</a></p>
+</blockquote>
 </article>
           </div>
         </div>
