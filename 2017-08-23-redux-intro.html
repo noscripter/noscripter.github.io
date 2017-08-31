@@ -366,7 +366,7 @@ unsubscribe()
 <tr><th></th><th>展现组件</th><th>容器组件</th></tr>
 </thead>
 <tbody>
-<tr><td>用途</td><td>与展示相关（标记、样式）</td><td>与运行相关（数据获取、状态更新）</td></tr>
+<tr><td>用图</td><td>与展示相关（标记、样式）</td><td>与运行相关（数据获取、状态更新）</td></tr>
 <tr><td>与 redux 直接联系</td><td>否</td><td>是</td></tr>
 <tr><td>数据读取</td><td>从属性读取</td><td>订阅 redux 状态数据</td></tr>
 <tr><td>数据修改</td><td>调用属性回调函数</td><td>dispatch redux action</td></tr>
@@ -400,6 +400,13 @@ unsubscribe()
 <ul>
 <li><a href="http://taobaofed.org/blog/2016/08/18/react-redux-connect/">http://taobaofed.org/blog/2016/08/18/react-redux-connect/</a></li>
 </ul>
+<p>用途来表述 react-redux 的数据流动关系：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1JLNDXyERMeJjSspiXXbZLFXa-2046-1534.png" alt=""></p>
+<p>重点关注下 connect API：</p>
+<ul>
+<li><a href="https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options">https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options</a></li>
+</ul>
+<h3>redux 实现</h3>
 <p>这张图对 react-redux 的实现细节做了『较好』的说明，可以看看：</p>
 <p><img src="https://cloud.githubusercontent.com/assets/25932306/23173871/e21da3da-f85a-11e6-9129-021365791bdc.png" alt=""></p>
 <blockquote>
