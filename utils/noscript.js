@@ -11,6 +11,19 @@
 
 const bg = 'background: transparent !important;';
 
+function logger(msg, level = 'info') {
+  const levels = {
+    info  : 'font-size: 0.8rem; color: green',
+    log   : 'font-size: 0.8rem; color: blue',
+    warn  : 'font-size: 0.8rem; color: yellow',
+    error : 'font-size: 0.8rem; color: red',
+  };
+  if (!level || !levels[level]) {
+    level = 'info';
+  }
+  console.log(`%c${msg}`, levels[level]);
+}
+
 const stupidScripts = [
   'aplus',
   'alilog',
@@ -33,9 +46,15 @@ window.checkPageHeaders = function checkPageHeaders() {
   var req = new XMLHttpRequest();
   req.open('GET', document.location.href, false);
   req.send(null);
-  var headers = req.getAllResponseHeaders().toLowerCase();
-  console.log('headers:\n' + headers);
+  try {
+    var headers = req.getAllResponseHeaders().toLowerCase();
+    logger(`【Response Headers】\n${headers}`);
+  } catch (e) {
+    logger(`checkPageHeaders error ${e}`, 'error');
+  }
 };
+
+checkPageHeaders();
 
 const BLOCK_WORDS = [
   // 'log',
@@ -261,7 +280,8 @@ function customNspTable() {
     openInNewTab();
     var btn = document.createElement('button');
     btn.innerText = '只看 FED 应用';
-    document.querySelector('.panel-heading').appendChild(btn);
+    var target = document.querySelector('.panel-heading');
+    if (target) target.appendChild(btn);
     var state;
     var originalHTML;
     btn.addEventListener('click', function() {
@@ -279,6 +299,11 @@ function customNspTable() {
 function blockRequest() {
   (function(open) {
     XMLHttpRequest.prototype.open = function(method, currentUrl, isAsync, user, pass) {
+      logger(`【XHR】 [${method}] url: ${currentUrl} in [${isAsync ? 'async' : 'sync'}] mode`);
+      if (method.toUpperCase() === 'POST' && !isAsync) {
+        logger(`【XHR】 Synchronous Post Request Pass`, 'warn');
+        return;
+      }
       var blocked = false;
       for (var j = 0, len = BLOCK_WORDS.length; j < len; j++) {
         if (currentUrl.indexOf(BLOCK_WORDS[j]) > -1) {
@@ -489,6 +514,9 @@ fuckStupidParams(undefined, 'spm', false);
 fuckStupidParams(undefined, 'acm', false);
 fuckStupidParams(undefined, 'ptp', false);
 fuckStupidParams(undefined, 'utm_source', false);
+fuckStupidParams(undefined, 'utm_term', false);
+fuckStupidParams(undefined, 'source', false);
+fuckStupidParams(undefined, 'awc', false);
 fuckStupidParams(undefined, 'ref', false);
 fuckStupidParams(undefined, 'mbsy', false);
 fuckStupidParams(undefined, 'utm_campaign', false);
@@ -536,7 +564,9 @@ function isNpmSite(hostname) {
   var hostnames = [
     'web.npm.alibaba-inc.com',
     'npm.taobao.org',
-    'npmjs.org'
+    'npmjs.org',
+    'npmjs.com',
+    'www.npmjs.com'
   ];
 
   return hostnames.some(h => {
@@ -593,10 +623,14 @@ function isNpmSite(hostname) {
       el.style = bg;
     });
   } else if (isNpmSite(hostname)) {
+    if (hostname === 'www.npmjs.com') hostname = hostname.replace('www.', '')
     var alinpmName = location.pathname.split('package')[1];
     var alinpmRegistry = `http://registry.${hostname}${alinpmName}`;
     var alinpmRegistryLatest = `http://registry.${hostname}${alinpmName}/latest`;
-    var alinpmRepo = document.querySelectorAll('.pack-repo')[0];
+    var alinpmRepo = document.querySelectorAll('.pack-repo')[0] || document.getElementById('top');
+    if (alinpmRepo) {
+      console.warn('npm registry appending target missing')
+    }
     var aliRegistryLink = document.createElement('a');
     var aliRegistryLatestLink = document.createElement('a');
     aliRegistryLink.style.color = 'red';
@@ -605,13 +639,21 @@ function isNpmSite(hostname) {
     aliRegistryLink.href = alinpmRegistry;
     aliRegistryLink.target = '_blank';
     aliRegistryLink.innerText = 'Registry';
-    alinpmRepo.appendChild(aliRegistryLink);
+    if (hostname === 'npmjs.com') {
+      alinpmRepo && alinpmRepo.prepend(aliRegistryLink);
+    } else {
+      alinpmRepo && alinpmRepo.appendChild(aliRegistryLink);
+    }
     aliRegistryLatestLink.style.color = 'red';
     aliRegistryLatestLink.style['font-weight'] = 'bold';
     aliRegistryLatestLink.href = alinpmRegistryLatest;
     aliRegistryLatestLink.target = '_blank';
     aliRegistryLatestLink.innerText = 'RegistryLatest';
-    alinpmRepo.appendChild(aliRegistryLatestLink);
+    if (hostname === 'npmjs.com') {
+      alinpmRepo && alinpmRepo.prepend(aliRegistryLatestLink);
+    } else {
+      alinpmRepo && alinpmRepo.appendChild(aliRegistryLatestLink);
+    }
   } else if (hostname.indexOf('google.com') > -1) {
     if (google && google.logUrl) {
       delete google.logUrl;
@@ -906,3 +948,14 @@ if (location.hostname.indexOf('gist.github.com') > -1) {
 } else if (location.hostname.indexOf('github.com') > -1) {
   addStyle(githubWideStyle);
 }
+
+function makeLinkOpenNew() {
+  var base = document.getElementsByTagName('base');
+  if (base.length === 0) {
+    base = document.createElement('base');
+    base.setAttribute('target', '_blank');
+    document.head.appendChild(base);
+  }
+}
+
+window.makeLinkOpenNew = makeLinkOpenNew;
