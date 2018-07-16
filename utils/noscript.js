@@ -780,173 +780,33 @@ window.inject = inject;
 function addStyle(s) {
   var el = document.createElement('style');
   el.textContent = s;
+  el.id = `${parseInt(new Date().getTime(), 32)}`;
   document.head.appendChild(el);
+  return el.id;
 }
 
-// https://raw.githubusercontent.com/mdo/github-wide/master/gist-wide.css
-var gistWideStyle = `
-  footer > .container, /* Footer */
-  .header > .container, /* Site header */
-  .pagehead > .container, /* All pageheads */
-  .site-container > .container, /* List view */
-  .site-container + .container /* Gist view */ {
-    width: 100% !important;
-    padding-left: 30px !important;
-    padding-right: 30px !important;
-  }
+// patch octotree toggle style with githubWideStyle
+// check if octotree is toggled
+function isOctoTreeOpen() {
+  return document.querySelector('html').classList.contains('octotree-show');
+}
 
-  .gist {
-    padding-right: 0 !important;
-  }
+function getOctoTreeWidth() {
+  const c = document.querySelector('.octotree_github_sidebar');
+  if (c) return c.getBoundingClientRect().width;;
+  return 0;
+}
 
-  .gist-sidebar {
-    position: relative;
-    margin-left: -170px;
-  }
+function currentDocWidth() {
+  // NOTE: difference between clientWidth, scrollWidth, offsetWidth
+  return document.querySelector('html').getBoundingClientRect().width;
+}
 
-  .gist-with-sidebar .gist-content {
-    width: 100% !important;
-    padding-right: 200px;
-  }
+let githubWideStylId = [];
 
-  .edit.container {
-    width: 100% !important;
-  }
-`;
-
-// https://raw.githubusercontent.com/mdo/github-wide/master/github-wide.css
-// github-wide style
-var githubWideStyle = `
-  .container {
-    width: 100% !important;
-    padding-left: 30px !important;
-    padding-right: 30px !important;
-  }
-
-  /* Repo Next layout */
-
-  .repository-content {
-    width: 100% !important;
-  }
-
-  .repository-with-sidebar {
-    padding-right: 60px !important;
-  }
-
-  .repository-with-sidebar .repository-sidebar {
-    margin-right: -60px !important;
-  }
-
-  .summary-stats,
-  .authors-and-code {
-    display: table;
-    width: 100%;
-  }
-
-  .summary-stats li {
-    width: 25%;
-  }
-
-  .authors-and-code .section {
-    width: 50%;
-  }
-
-  /* Repo Next Code page */
-
-  .with-full-navigation {
-    padding-right: 190px !important;
-  }
-
-  .with-full-navigation .repository-sidebar {
-    margin-right: -190px !important;
-  }
-
-  /* Issues/PRs */
-
-  .discussion-sidebar {
-    width: 220px !important;
-  }
-
-  .discussion-timeline {
-    width: calc(100% - 240px) !important;
-  }
-
-  /* Fix #18 - props: @auscompgeek */
-  .file-header::after {
-    clear: left !important;
-  }
-
-  /* New issues and Dashboard */
-
-  #dashboard,
-  .new-issue-form {
-    position: relative !important;
-  }
-
-  .dashboard-sidebar,
-  .new-issue-form .discussion-sidebar {
-    position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-  }
-
-  button.discussion-sidebar-toggle {
-    width: 100% !important;
-  }
-
-  .timeline-new-comment {
-    max-width: none !important;
-  }
-
-  /* Dashboard */
-  /* Note that this won't be needed if we actually flipped the DOM order around. */
-
-  .news {
-    float: none !important;
-    margin-right: 360px !important;
-  }
-
-  /* Settings */
-  /* This should be refactored to use our grid.scss styles anyway, thus negating these styles. */
-
-  .settings-content,
-  .repo-settings-content {
-    float: none !important;
-    width: auto !important;
-    overflow: auto !important; /* required to clear the floats that the float avoided */
-  }
-  .container > .settings-content,
-  .repo-settings-content {
-    margin-left: 260px !important;
-  }
-
-  #repo-settings .menu-container {
-    width: 240px !important;
-  }
-
-  #js-flash-container .flash-messages {
-    width: 100% !important;
-    padding-left: 30px !important;
-    padding-right: 30px !important;
-  }
-
-  /* Profile page */
-
-  /* Profile avatar tooltip */
-  .u-photo .avatar {
-    width: 230px !important;
-  }
-
-  /* Commits: extended message under "..." */
-  .commit-desc pre {
-    max-width: none;
-  }
-`;
-
-if (location.hostname.indexOf('gist.github.com') > -1) {
-  addStyle(gistWideStyle);
-} else if (location.hostname.indexOf('github.com') > -1) {
-  addStyle(githubWideStyle);
+if (location.hostname.indexOf('github.com') > -1) {
+  dynamicWidthGithub();
+  logger(`githubWideStylId: ${githubWideStylId}`);
 }
 
 function makeLinkOpenNew() {
@@ -959,3 +819,168 @@ function makeLinkOpenNew() {
 }
 
 window.makeLinkOpenNew = makeLinkOpenNew;
+
+// dynamically detect if an element exist
+function available(el, cb) {
+  const id = setInterval(function() {
+    if (document.querySelector(el)) {
+      clearInterval(id);
+      cb()
+    }
+  },1000);
+}
+
+function dynamicWidthGithub() {
+  let s;
+  if (document.querySelector('html').classList.contains('octotree-show')) {
+    logger(`octotree-show with styleId: ${githubWideStylId}`)
+    githubWideStylId.forEach(id => {
+      document.getElementById(id).remove();
+    })
+    githubWideStylId = []
+  } else {
+    logger('octotree-hidden')
+    githubWideStylId.push(addGithubWidthStyle());
+  }
+}
+
+available('.octotree_sidebar', function() {
+  logger('found octotree sidebar');
+  dynamicWidthGithub();
+  document.querySelector('.octotree_sidebar').addEventListener('click', function() {
+    logger('.octotree_sidebar clicked');
+    dynamicWidthGithub();
+  });
+});
+
+function addGithubWidthStyle() {
+  // https://raw.githubusercontent.com/mdo/github-wide/master/github-wide.css
+  // github-wide style
+  var githubWideStyle = `
+    .container {
+      width: 100% !important;
+      padding-left: 30px !important;
+      padding-right: 30px !important;
+    }
+
+    /* Repo Next layout */
+
+    .repository-content {
+      width: 100% !important;
+    }
+
+    .repository-with-sidebar {
+      padding-right: 60px !important;
+    }
+
+    .repository-with-sidebar .repository-sidebar {
+      margin-right: -60px !important;
+    }
+
+    .summary-stats,
+    .authors-and-code {
+      display: table;
+      width: 100%;
+    }
+
+    .summary-stats li {
+      width: 25%;
+    }
+
+    .authors-and-code .section {
+      width: 50%;
+    }
+
+    /* Repo Next Code page */
+
+    .with-full-navigation {
+      padding-right: 190px !important;
+    }
+
+    .with-full-navigation .repository-sidebar {
+      margin-right: -190px !important;
+    }
+
+    /* Issues/PRs */
+
+    .discussion-sidebar {
+      width: 220px !important;
+    }
+
+    .discussion-timeline {
+      width: calc(100% - 240px) !important;
+    }
+
+    /* Fix #18 - props: @auscompgeek */
+    .file-header::after {
+      clear: left !important;
+    }
+
+    /* New issues and Dashboard */
+
+    #dashboard,
+    .new-issue-form {
+      position: relative !important;
+    }
+
+    .dashboard-sidebar,
+    .new-issue-form .discussion-sidebar {
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+    }
+
+    button.discussion-sidebar-toggle {
+      width: 100% !important;
+    }
+
+    .timeline-new-comment {
+      max-width: none !important;
+    }
+
+    /* Dashboard */
+    /* Note that this won't be needed if we actually flipped the DOM order around. */
+
+    .news {
+      float: none !important;
+      margin-right: 360px !important;
+    }
+
+    /* Settings */
+    /* This should be refactored to use our grid.scss styles anyway, thus negating these styles. */
+
+    .settings-content,
+    .repo-settings-content {
+      float: none !important;
+      width: auto !important;
+      overflow: auto !important; /* required to clear the floats that the float avoided */
+    }
+    .container > .settings-content,
+    .repo-settings-content {
+      margin-left: 260px !important;
+    }
+
+    #repo-settings .menu-container {
+      width: 240px !important;
+    }
+
+    #js-flash-container .flash-messages {
+      width: 100% !important;
+      padding-left: 30px !important;
+      padding-right: 30px !important;
+    }
+
+    /* Profile page */
+
+    /* Profile avatar tooltip */
+    .u-photo .avatar {
+      width: 230px !important;
+    }
+
+    /* Commits: extended message under "..." */
+    .commit-desc pre {
+      max-width: none;
+    }
+  `;
+  return addStyle(githubWideStyle);
+}
