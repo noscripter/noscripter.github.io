@@ -334,7 +334,7 @@ function blockRequest() {
         this.abort();
       } else {
         log(currentUrl + ' passthrough', 'success');
-        open.call(this, method, currentUrl, isAsync, user, pass);
+        open.call(this, method, currentUrl, true, user, pass);
       }
     };
   })(XMLHttpRequest.prototype.open);
@@ -511,6 +511,7 @@ function fuckStupidParams(url, name, getValue) {
 }
 
 fuckStupidParams(undefined, 'spm', false);
+fuckStupidParams(undefined, 'jmp', false);
 fuckStupidParams(undefined, 'acm', false);
 fuckStupidParams(undefined, 'ptp', false);
 fuckStupidParams(undefined, 'utm_source', false);
@@ -804,7 +805,8 @@ function currentDocWidth() {
 
 let githubWideStylId = [];
 
-if (location.hostname.indexOf('github.com') > -1) {
+if (location.hostname.indexOf('github.com') > -1 && location.href !== 'https://github.com' && location.href !=- 'https://github.com/') {
+  // NOTE: opt-in for the new github dashboard style
   dynamicWidthGithub();
   logger(`githubWideStylId: ${githubWideStylId}`);
 }
@@ -831,6 +833,7 @@ function available(el, cb) {
 }
 
 function dynamicWidthGithub() {
+  if (location.href === 'https://github.com/' || location.href === 'https://github.com') return
   let s;
   if (document.querySelector('html').classList.contains('octotree-show')) {
     logger(`octotree-show with styleId: ${githubWideStylId}`)
@@ -983,4 +986,14 @@ function addGithubWidthStyle() {
     }
   `;
   return addStyle(githubWideStyle);
+}
+
+
+if (navigator.userAgent.match(/Gecko/)) {
+    addStyle(`
+*,
+body {
+  font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif !important;
+}
+`)
 }
