@@ -585,11 +585,14 @@ function isNpmSite(hostname) {
   blockRequest();
 
   if (hostname.indexOf('typescriptlang') > -1) {
-    var typescriptlangNav = document.getElementById('main-nav');
-    typescriptlangNav.style.position = 'fixed';
-    typescriptlangNav.style.left = '10px';
-    typescriptlangNav.style.top = '100px';
-    typescriptlangNav.style.border = '1px solid #DDD';
+    // TODO
+    /*
+     *var typescriptlangNav = document.getElementById('main-nav');
+     *typescriptlangNav.style.position = 'fixed';
+     *typescriptlangNav.style.left = '10px';
+     *typescriptlangNav.style.top = '100px';
+     *typescriptlangNav.style.border = '1px solid #DDD';
+     */
   } else if (hostname.indexOf('alimovie.taobao.net') > -1) {
     var alimovieContainer = document.querySelectorAll('.movie-detail')[0];
     var alimovieImg = document.querySelectorAll('.movie-detail img')[0].src;
@@ -989,11 +992,18 @@ function addGithubWidthStyle() {
 }
 
 
-if (navigator.userAgent.match(/Gecko/)) {
+if (navigator.userAgent.match(/Firefox/)) {
     addStyle(`
 *,
 body {
   font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif !important;
 }
 `)
+}
+
+if (location.hostname === 'xkctk.hangzhou.gov.cn') {
+  setInterval(() => {
+    // stupid constraint
+    validCodeCount = 0
+  }, 1000)
 }
