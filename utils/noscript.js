@@ -300,6 +300,7 @@ function blockRequest() {
   (function(open) {
     XMLHttpRequest.prototype.open = function(method, currentUrl, isAsync, user, pass) {
       logger(`【XHR】 [${method}] url: ${currentUrl} in [${isAsync ? 'async' : 'sync'}] mode`);
+      // 同步的 POST 请求放过
       if (method.toUpperCase() === 'POST' && !isAsync) {
         logger(`【XHR】 Synchronous Post Request Pass`, 'warn');
         return;
@@ -333,8 +334,15 @@ function blockRequest() {
         log(currentUrl + ' blocked', 'error');
         this.abort();
       } else {
-        log(currentUrl + ' passthrough', 'success');
-        open.call(this, method, currentUrl, true, user, pass);
+        try {
+          log(currentUrl + ' passthrough', 'success');
+          // 先尝试异步
+          open.call(this, method, currentUrl, true, user, pass);
+        } catch (e) {
+          // XHR 同步模式 detrimental & 不能设置属性
+          log(`XMLHttpRequest open error: ${e.message}`, 'error')
+          open.call(this, method, currentUrl, false, user, pass);
+        }
       }
     };
   })(XMLHttpRequest.prototype.open);
