@@ -54,7 +54,7 @@ window.checkPageHeaders = function checkPageHeaders() {
   }
 };
 
-checkPageHeaders();
+window.checkPageHeaders();
 
 const BLOCK_WORDS = [
   // 'log',
@@ -94,7 +94,7 @@ window.removeCnzz = function removeCnzz() {
   });
 };
 
-// removeCnzz();
+window.removeCnzz();
 
 function log(message, type) {
   var style = 'font-size: 0.785rem; font-weight: bold; padding: 5px 20px;; width: 100%; line-height: 40px;';
@@ -318,8 +318,8 @@ function blockRequest() {
           var hostname = temp.hostname;
           var url = temp.url;
           if (location.hostname.indexOf(hostname) > -1 && url && url.length > 0) {
-            for (var j = url.length - 1; j > -1; j--) {
-              if (currentUrl.indexOf(url[j]) > -1) {
+            for (var j2 = url.length - 1; j2 > -1; j2--) {
+              if (currentUrl.indexOf(url[j2]) > -1) {
                 blocked = true;
                 break;
               }
@@ -406,51 +406,51 @@ function customNsp(nspTopTable, state, btn, originalHTML, fetchNspOwner) {
             tr.style.color = 'WHITE !important';
             tr.style['font-weight'] = 'bolder';
             tr.querySelector('a').style = 'color: white !important; font-weight: bolder;';
-            var tds = tr.querySelectorAll('td');
-            var vul = {};
-            tds.forEach((td, idx) => {
+            var tds2 = tr.querySelectorAll('td');
+            var vul2 = {};
+            tds2.forEach((td, idx) => {
               td.style = 'color: white !important; font-weight: bolder;';
               // 应用名
               switch (idx) {
                 case 1:
-                  vul.appName = td.innerText;
+                  vul2.appName = td.innerText;
                   break;
                 default:
                   break;
               }
             });
-            fedVuls.push(vul);
+            fedVuls.push(vul2);
             break;
           case 3:
             tr.style.background = 'ORANGE';
             tr.style.color = 'WHITE !important';
             tr.style['font-weight'] = 'bolder';
             tr.querySelector('a').style = 'color: white !important; font-weight: bolder;';
-            var tds = tr.querySelectorAll('td');
-            var vul = {};
-            tds.forEach((td, idx) => {
+            var tds3 = tr.querySelectorAll('td');
+            var vul3 = {};
+            tds3.forEach((td, idx) => {
               td.style = 'color: white !important; font-weight: bolder;';
               // 应用名
               switch (idx) {
                 case 1:
-                  vul.appName = td.innerText;
+                  vul3.appName = td.innerText;
                   break;
                 default:
                   break;
               }
             });
-            fedVuls.push(vul);
+            fedVuls.push(vul3);
             break;
           default:
             // TODO: 测试
             if (count < 10) {
-              var tds = tr.querySelectorAll('td');
-              var vul = {};
-              tds.forEach((td, idx) => {
+              var tds4 = tr.querySelectorAll('td');
+              var vul4 = {};
+              tds4.forEach((td, idx) => {
                 // 应用名
                 switch (idx) {
                   case 1:
-                    vul.appName = td.innerText;
+                    vul4.appName = td.innerText;
                     break;
                   default:
                     break;
@@ -501,24 +501,26 @@ function fuckStupidParams(url, name, getValue) {
     }
     return;
   }
-  var url = oldUrl.replace(reg, function(match) {
+  var url2 = oldUrl.replace(reg, function(match) {
     if (match[0] === '?') {
       return '?';
     }
     return '';
   });
-  url = url.replace('?&', '?');
-  if (url.indexOf('?') === url.length - 1) {
-    url = url.slice(0, url.indexOf('?'));
+  url2 = url2.replace('?&', '?');
+  if (url2.indexOf('?') === url2.length - 1) {
+    url2 = url2.slice(0, url2.indexOf('?'));
   }
   if (getValue) {
-    return url;
+    return url2;
   }
-  location.replace(url);
+  location.replace(url2);
   log('fuck spm parameters', 'success');
 }
 
 fuckStupidParams(undefined, 'spm', false);
+fuckStupidParams(undefined, 'promoid', false);
+fuckStupidParams(undefined, 'mv', false);
 fuckStupidParams(undefined, 'jmp', false);
 fuckStupidParams(undefined, 'acm', false);
 fuckStupidParams(undefined, 'ptp', false);
@@ -713,8 +715,8 @@ function isNpmSite(hostname) {
       };
     });
   } else if (hostname.indexOf('zhihu.com') > -1) {
-    var links = document.querySelectorAll('a');
-    [].slice.call(links).forEach(link => {
+    var links2 = document.querySelectorAll('a');
+    [].slice.call(links2).forEach(link => {
       if (link.href.indexOf('link.zhihu.com') > -1) {
         link.setAttribute('href', decodeURIComponent(
           link.href.split('target=')[1]
@@ -999,12 +1001,13 @@ function addGithubWidthStyle() {
   return addStyle(githubWideStyle);
 }
 
-
+// disturbing ugly character display of chinese character '门'
+// in default Firefox font display
 if (navigator.userAgent.match(/Firefox/)) {
     addStyle(`
 *,
 body {
-  font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif !important;
+  font-family: "Hei", "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif !important;
 }
 `)
 }
