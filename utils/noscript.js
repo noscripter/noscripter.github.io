@@ -9,14 +9,16 @@
 // @grant        none
 // ==/UserScript==
 
+/* global google */
+
 const bg = 'background: transparent !important;';
 
 function logger(msg, level = 'info') {
   const levels = {
-    info  : 'font-size: 0.8rem; color: green',
-    log   : 'font-size: 0.8rem; color: blue',
-    warn  : 'font-size: 0.8rem; color: yellow',
-    error : 'font-size: 0.8rem; color: red',
+    info: 'font-size: 0.8rem; color: green',
+    log: 'font-size: 0.8rem; color: blue',
+    warn: 'font-size: 0.8rem; color: yellow',
+    error: 'font-size: 0.8rem; color: red',
   };
   if (!level || !levels[level]) {
     level = 'info';
@@ -40,14 +42,17 @@ const stupidScripts = [
   'WaterMark',
   'watermark',
   'monitor',
+  'ecma.bdimg.com',
+  's11.cn',
+  'sinaads',
 ];
 
 window.checkPageHeaders = function checkPageHeaders() {
-  var req = new XMLHttpRequest();
+  const req = new XMLHttpRequest();
   req.open('GET', document.location.href, false);
   req.send(null);
   try {
-    var headers = req.getAllResponseHeaders().toLowerCase();
+    const headers = req.getAllResponseHeaders().toLowerCase();
     logger(`【Response Headers】\n${headers}`);
   } catch (e) {
     logger(`checkPageHeaders error ${e}`, 'error');
@@ -63,30 +68,27 @@ const BLOCK_WORDS = [
 ];
 
 window.listScripts = function listScripts() {
-  [].slice.call(document.querySelectorAll('script'))
-    .forEach(function(script) {
-      log(script.src);
-    });
+  [].slice.call(document.querySelectorAll('script')).forEach(function(script) {
+    log(script.src);
+  });
   performance.getEntries();
 };
 
-window.fuckAdScript = function fuckAdScript() {
+function fuckAdScript(scripts) {
   if (location.search.indexOf('noscripter') === -1) {
-    setInterval(function() {
-      [].slice.call(document.querySelectorAll('script')).forEach(function(script) {
-        var src = script.src;
-        stupidScripts.forEach(function(s) {
+    [].slice
+      .call(document.querySelectorAll('script'))
+      .forEach(function(script) {
+        const src = script.src;
+        scripts.forEach(function(s) {
           if (src.indexOf(s) > -1) {
             script.remove();
             log('remove script:' + src, 'error');
           }
         });
       });
-    }, 1000);
   }
-};
-
-// fuckAdScript();
+}
 
 window.removeCnzz = function removeCnzz() {
   [].slice.call(document.querySelectorAll('.cnzz_block')).forEach(el => {
@@ -97,7 +99,8 @@ window.removeCnzz = function removeCnzz() {
 window.removeCnzz();
 
 function log(message, type) {
-  var style = 'font-size: 0.785rem; font-weight: bold; padding: 5px 20px;; width: 100%; line-height: 40px;';
+  let style =
+    'font-size: 0.785rem; font-weight: bold; padding: 5px 20px;; width: 100%; line-height: 40px;';
   switch (type) {
     case undefined:
       style += 'color: white; background: blue;';
@@ -107,6 +110,9 @@ function log(message, type) {
       break;
     case 'success':
       style += 'color: white; background: green;';
+      break;
+    default:
+      style += 'color: white; background: blue;';
       break;
   }
   console.log(`%c ${message}`, style);
@@ -131,22 +137,22 @@ window._goTop = function goTop() {
   document.body.appendChild(btn);
 };
 
-var BLACKLIST = [{
-  hostname: 'www.aliway.com',
-  url: [
-    'commonAjax.php?action=log'
-  ]
-}, {
-  hostname: 'zhihu.com',
-  url: [
-    'logs'
-  ]
-}, {
-  hostname: 'casalemedia'
-}];
+const BLACKLIST = [
+  {
+    hostname: 'www.aliway.com',
+    url: [ 'commonAjax.php?action=log' ],
+  },
+  {
+    hostname: 'zhihu.com',
+    url: [ 'logs' ],
+  },
+  {
+    hostname: 'casalemedia',
+  },
+];
 
 function injectNspLink() {
-  var a = document.createElement('a');
+  const a = document.createElement('a');
   a.setAttribute('id', 'sandboxNspLink');
   a.setAttribute('target', '_blank');
   a.href = 'http://sandbox.alibaba-inc.com/#/reports/nsp';
@@ -174,27 +180,30 @@ function injectNspLink() {
 }
 
 function injectAnimateCss(cb) {
-  var a = document.createElement('link');
+  const a = document.createElement('link');
   a.setAttribute('rel', 'stylesheet');
-  a.setAttribute('href', 'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css');
+  a.setAttribute(
+    'href',
+    'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css'
+  );
   document.head.appendChild(a);
   cb();
 }
 
 function openInNewTab() {
   log('openInNewTab start');
-  var links = document.querySelectorAll('a');
+  let links = document.querySelectorAll('a');
   links = [].slice.call(links);
   links.forEach(link => {
     link.setAttribute('target', '_blank');
-    var newLink = fuckStupidParams(link.getAttribute('href'), 'spm', true);
+    const newLink = fuckStupidParams(link.getAttribute('href'), 'spm', true);
     link.setAttribute('href', newLink);
   });
   log('openInNewTab end');
 }
 
 function tabOpenAllLinks() {
-  var links = document.querySelectorAll('a');
+  const links = document.querySelectorAll('a');
   [].slice.call(links).forEach(link => {
     link.onclick = function(e) {
       e.preventDefault();
@@ -205,28 +214,28 @@ function tabOpenAllLinks() {
 
 /**
  * 获取应用 Owner 信息
+ * @param {Array} vuls -- vulnerabilities
  */
 function fetchNspOwner(vuls) {
-  var queryVulApi = '/api/application.getAppFlawDetail?params=';
+  const queryVulApi = '/api/application.getAppFlawDetail?params=';
 
   function makeReq(vul) {
     return new Promise(function(resolve, reject) {
-      fetch(
-        queryVulApi + JSON.stringify(vul), {
-          credentials: 'include'
-        }
-      )
+      fetch(queryVulApi + JSON.stringify(vul), {
+        credentials: 'include',
+      })
         .then(data => {
-          data.json()
+          data
+            .json()
             .then(d => {
-              var result = d.result;
-              var nsp = result.nsp;
-              var owner = JSON.parse(result.users).owner[0].firstName;
-              var s0 = 0;
-              var s1 = 0;
-              var s2 = 0;
-              var s3 = 0;
-              var s4 = 0;
+              const result = d.result;
+              const nsp = result.nsp;
+              const owner = JSON.parse(result.users).owner[0].firstName;
+              let s0 = 0;
+              let s1 = 0;
+              let s2 = 0;
+              let s3 = 0;
+              let s4 = 0;
               nsp.forEach(nsp => {
                 if (nsp.vul_actual_overall_rank.indexOf('S0') > -1) {
                   s0++;
@@ -247,7 +256,7 @@ function fetchNspOwner(vuls) {
                 s1,
                 s2,
                 s3,
-                s4
+                s4,
               });
             })
             .catch(e => {
@@ -264,28 +273,36 @@ function fetchNspOwner(vuls) {
     vuls.map(vul => {
       return makeReq(vul);
     })
-  ).then(data => {
-    log(`FED TOP3 Vulnerable Apps Owners ${JSON.stringify(data)}`);
-  }).catch(e => {
-    log(e, 'error');
-  });
+  )
+    .then(data => {
+      log(`FED TOP3 Vulnerable Apps Owners ${JSON.stringify(data)}`);
+    })
+    .catch(e => {
+      log(e, 'error');
+    });
 }
 
 function customNspTable() {
-  var nspTopTable = document.querySelectorAll('table')[0];
-  var timer;
+  const nspTopTable = document.querySelectorAll('table')[0];
+  let timer;
   if (nspTopTable) {
     log('nspTopTable ready', 'success');
     clearTimeout(timer);
     openInNewTab();
-    var btn = document.createElement('button');
+    const btn = document.createElement('button');
     btn.innerText = '只看 FED 应用';
-    var target = document.querySelector('.panel-heading');
+    const target = document.querySelector('.panel-heading');
     if (target) target.appendChild(btn);
-    var state;
-    var originalHTML;
+    let state;
+    let originalHTML;
     btn.addEventListener('click', function() {
-      var result = customNsp(nspTopTable, state, btn, originalHTML, fetchNspOwner);
+      const result = customNsp(
+        nspTopTable,
+        state,
+        btn,
+        originalHTML,
+        fetchNspOwner
+      );
       state = result.state;
       originalHTML = result.originalHTML;
     });
@@ -297,69 +314,80 @@ function customNspTable() {
 }
 
 function blockRequest() {
-  (function(open) {
-    XMLHttpRequest.prototype.open = function(method, currentUrl, isAsync, user, pass) {
-      logger(`【XHR】 [${method}] url: ${currentUrl} in [${isAsync ? 'async' : 'sync'}] mode`);
-      // 同步的 POST 请求放过
-      if (method.toUpperCase() === 'POST' && !isAsync) {
-        logger(`【XHR】 Synchronous Post Request Pass`, 'warn');
-        return;
+  XMLHttpRequest.prototype.open = function(
+    method,
+    currentUrl,
+    isAsync,
+    user,
+    pass
+  ) {
+    logger(
+      `【XHR】 [${method}] url: ${currentUrl} in [${
+        isAsync ? 'async' : 'sync'
+      }] mode`
+    );
+    // 同步的 POST 请求放过
+    if (method.toUpperCase() === 'POST' && !isAsync) {
+      logger('【XHR】 Synchronous Post Request Pass', 'warn');
+      return;
+    }
+    let blocked = false;
+    for (let j = 0, len = BLOCK_WORDS.length; j < len; j++) {
+      if (currentUrl.indexOf(BLOCK_WORDS[j]) > -1) {
+        blocked = true;
+        break;
       }
-      var blocked = false;
-      for (var j = 0, len = BLOCK_WORDS.length; j < len; j++) {
-        if (currentUrl.indexOf(BLOCK_WORDS[j]) > -1) {
-          blocked = true;
-          break;
-        }
-      }
-      if (!blocked) {
-        for (var i = 0, l = BLACKLIST.length; i < l; i++) {
-          var temp = BLACKLIST[i];
-          var hostname = temp.hostname;
-          var url = temp.url;
-          if (location.hostname.indexOf(hostname) > -1 && url && url.length > 0) {
-            for (var j2 = url.length - 1; j2 > -1; j2--) {
-              if (currentUrl.indexOf(url[j2]) > -1) {
-                blocked = true;
-                break;
-              }
-            }
-            if (blocked) {
+    }
+    if (!blocked) {
+      for (let i = 0, l = BLACKLIST.length; i < l; i++) {
+        const temp = BLACKLIST[i];
+        const hostname = temp.hostname;
+        const url = temp.url;
+        if (
+          location.hostname.indexOf(hostname) > -1 &&
+          url &&
+          url.length > 0
+        ) {
+          for (let j2 = url.length - 1; j2 > -1; j2--) {
+            if (currentUrl.indexOf(url[j2]) > -1) {
+              blocked = true;
               break;
             }
           }
+          if (blocked) {
+            break;
+          }
         }
       }
-      if (blocked) {
-        log(currentUrl + ' blocked', 'error');
-        this.abort();
-      } else {
-        try {
-          log(currentUrl + ' passthrough', 'success');
-          // 先尝试异步
-          open.call(this, method, currentUrl, true, user, pass);
-        } catch (e) {
-          // XHR 同步模式 detrimental & 不能设置属性
-          log(`XMLHttpRequest open error: ${e.message}`, 'error')
-          open.call(this, method, currentUrl, false, user, pass);
-        }
+    }
+    if (blocked) {
+      log(currentUrl + ' blocked', 'error');
+      this.abort();
+    } else {
+      try {
+        log(currentUrl + ' passthrough', 'success');
+        // 先尝试异步
+        open.call(this, method, currentUrl, true, user, pass);
+      } catch (e) {
+        // XHR 同步模式 detrimental & 不能设置属性
+        log(`XMLHttpRequest open error: ${e.message}`, 'error');
+        open.call(this, method, currentUrl, false, user, pass);
       }
-    };
-  })(XMLHttpRequest.prototype.open);
+    }
+  };
 }
 
 /**
- * @param {HTMLDOMElement} nspTopTable
+ * @param {HTMLDOMElement} nspTopTable -- nsp top
  * @param {Boolean} state -- false | undefined, not show custom table
- * @param {HTMLDOMElement} btn
- * @param {String} originalHTML
+ * @param {HTMLDOMElement} btn -- button element
+ * @param {String} originalHTML -- original html string
  * @param {Function} fetchNspOwner -- callback function
  * @return {Boolean} state
  */
 function customNsp(nspTopTable, state, btn, originalHTML, fetchNspOwner) {
-  var head = nspTopTable.querySelector('thead');
-  var body = nspTopTable.querySelector('tbody');
-  var trs = body.querySelectorAll('tr');
+  const body = nspTopTable.querySelector('tbody');
+  let trs = body.querySelectorAll('tr');
   trs = [].slice.call(trs);
 
   if (state) {
@@ -371,23 +399,27 @@ function customNsp(nspTopTable, state, btn, originalHTML, fetchNspOwner) {
     btn.style.color = 'red';
     originalHTML = nspTopTable.innerHTML;
 
-    var count = 0;
-    var fedVuls = [];
+    let count = 0;
+    const fedVuls = [];
     trs.forEach(tr => {
-      var l = tr.querySelector('a');
+      const l = tr.querySelector('a');
       l.setAttribute('href', l.href);
       l.setAttribute('target', '_blank');
-      if (tr.innerHTML.indexOf('淘宝') > -1 /* && tr.innerHTML.indexOf('异常') === -1*/) {
+      if (
+        tr.innerHTML.indexOf('淘宝') >
+        -1 /* && tr.innerHTML.indexOf('异常') === -1*/
+      ) {
         count++;
         tr.querySelector('td').innerText = count;
+        const tds = tr.querySelectorAll('td');
+        const vul = {};
         switch (count) {
           case 1:
             tr.style.background = 'RED';
             tr.style.color = 'WHITE !important';
             tr.style['font-weight'] = 'bolder';
-            tr.querySelector('a').style = 'color: white !important; font-weight: bolder;';
-            var tds = tr.querySelectorAll('td');
-            var vul = {};
+            tr.querySelector('a').style =
+              'color: white !important; font-weight: bolder;';
             tds.forEach((td, idx) => {
               td.style = 'color: white !important; font-weight: bolder;';
               // 应用名
@@ -405,47 +437,45 @@ function customNsp(nspTopTable, state, btn, originalHTML, fetchNspOwner) {
             tr.style.background = '#FE5200';
             tr.style.color = 'WHITE !important';
             tr.style['font-weight'] = 'bolder';
-            tr.querySelector('a').style = 'color: white !important; font-weight: bolder;';
-            var tds2 = tr.querySelectorAll('td');
-            var vul2 = {};
-            tds2.forEach((td, idx) => {
+            tr.querySelector('a').style =
+              'color: white !important; font-weight: bolder;';
+            tds.forEach((td, idx) => {
               td.style = 'color: white !important; font-weight: bolder;';
               // 应用名
               switch (idx) {
                 case 1:
-                  vul2.appName = td.innerText;
+                  vul.appName = td.innerText;
                   break;
                 default:
                   break;
               }
             });
-            fedVuls.push(vul2);
+            fedVuls.push(vul);
             break;
           case 3:
             tr.style.background = 'ORANGE';
             tr.style.color = 'WHITE !important';
             tr.style['font-weight'] = 'bolder';
-            tr.querySelector('a').style = 'color: white !important; font-weight: bolder;';
-            var tds3 = tr.querySelectorAll('td');
-            var vul3 = {};
-            tds3.forEach((td, idx) => {
+            tr.querySelector('a').style =
+              'color: white !important; font-weight: bolder;';
+            tds.forEach((td, idx) => {
               td.style = 'color: white !important; font-weight: bolder;';
               // 应用名
               switch (idx) {
                 case 1:
-                  vul3.appName = td.innerText;
+                  vul.appName = td.innerText;
                   break;
                 default:
                   break;
               }
             });
-            fedVuls.push(vul3);
+            fedVuls.push(vul);
             break;
           default:
             // TODO: 测试
             if (count < 10) {
-              var tds4 = tr.querySelectorAll('td');
-              var vul4 = {};
+              const tds4 = tr.querySelectorAll('td');
+              const vul4 = {};
               tds4.forEach((td, idx) => {
                 // 应用名
                 switch (idx) {
@@ -472,15 +502,15 @@ function customNsp(nspTopTable, state, btn, originalHTML, fetchNspOwner) {
   }
   return {
     state,
-    originalHTML
+    originalHTML,
   };
 }
 
 function getParameterByName(name, url) {
   if (!url) url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');
-  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-    results = regex.exec(url);
+  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+  const results = regex.exec(url);
   if (!results) return null;
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
@@ -491,17 +521,18 @@ function getParameterByName(name, url) {
  * @param {string} url -- url to be stripped of params
  * @param {string} name -- parameter name to be stripped
  * @param {boolean} getValue -- just return new url or not
+ * @return {String|undefined} -- return url string or undefined
  */
 function fuckStupidParams(url, name, getValue) {
-  var reg = new RegExp('([?&])' + name + '(=([^&#]*)|&|#|$)');
-  var oldUrl = url || location.href;
+  const reg = new RegExp('([?&])' + name + '(=([^&#]*)|&|#|$)');
+  const oldUrl = url || location.href;
   if (!reg.test(oldUrl)) {
     if (getValue) {
       return oldUrl;
     }
     return;
   }
-  var url2 = oldUrl.replace(reg, function(match) {
+  let url2 = oldUrl.replace(reg, function(match) {
     if (match[0] === '?') {
       return '?';
     }
@@ -518,6 +549,7 @@ function fuckStupidParams(url, name, getValue) {
   log('fuck spm parameters', 'success');
 }
 
+fuckStupidParams(undefined, 'pvid', false);
 fuckStupidParams(undefined, 'spm', false);
 fuckStupidParams(undefined, 'promoid', false);
 fuckStupidParams(undefined, 'mv', false);
@@ -537,58 +569,57 @@ fuckStupidParams(undefined, 'mbsy_source', false);
 fuckStupidParams(undefined, 'campaignid', false);
 fuckStupidParams(undefined, '_ga', false);
 
+function removeOverlay() {
+  const elList = [
+    '#sms-codes-dialog',
+    '#leadgen-confirm-dialog',
+    '#auth-webview-dialog',
+    '#media-edit-dialog',
+    '.modal-overlay',
+    '#activity-popup-dialog',
+    '#copy-link-to-tweet-dialog',
+    '#embed-tweet-dialog',
+    '#why-this-ad-dialog',
+    '#login-dialog',
+    '#signup-dialog',
+    '#promptbird-modal-prompt',
+    '#ui-walkthrough-dialog',
+    '#location-picker-dialog',
+    '#block-user-dialog',
+    '#quick-promote-dialog',
+    '#goto-user-dialog',
+    '#trends_dialog',
+    '.PermalinkOverlay',
+    '.PermalinkOverlay-with-background',
+  ];
+  elList.forEach(tag => {
+    const els = document.querySelectorAll(tag);
+    els.forEach(el => el.remove());
+  });
+}
+
 (function removeTwitterOverlay() {
   if (location.hostname.indexOf('twitter') > -1) {
-    function removeOverlay() {
-      var elList = [
-        '#sms-codes-dialog',
-        '#leadgen-confirm-dialog',
-        '#auth-webview-dialog',
-        '#media-edit-dialog',
-        '.modal-overlay',
-        '#activity-popup-dialog',
-        '#copy-link-to-tweet-dialog',
-        '#embed-tweet-dialog',
-        '#why-this-ad-dialog',
-        '#login-dialog',
-        '#signup-dialog',
-        '#promptbird-modal-prompt',
-        '#ui-walkthrough-dialog',
-        '#location-picker-dialog',
-        '#block-user-dialog',
-        '#quick-promote-dialog',
-        '#goto-user-dialog',
-        '#trends_dialog',
-        '.PermalinkOverlay',
-        '.PermalinkOverlay-with-background',
-      ];
-      elList.forEach(tag => {
-        var els = document.querySelectorAll(tag);
-        els.forEach(el => el.remove());
-      });
-    }
     window.removeTwitterOverlay = removeOverlay;
   }
 })();
 
 function isNpmSite(hostname) {
-  var hostnames = [
+  const hostnames = [
     'web.npm.alibaba-inc.com',
     'npm.taobao.org',
     'npmjs.org',
     'npmjs.com',
-    'www.npmjs.com'
+    'www.npmjs.com',
   ];
 
   return hostnames.some(h => {
-    return h.indexOf(hostname) > -1
+    return h.indexOf(hostname) > -1;
   });
 }
 
 (function() {
-
-
-  var hostname = location.hostname;
+  let hostname = location.hostname;
 
   log('secret power of noscripter');
 
@@ -604,13 +635,14 @@ function isNpmSite(hostname) {
      *typescriptlangNav.style.border = '1px solid #DDD';
      */
   } else if (hostname.indexOf('alimovie.taobao.net') > -1) {
-    var alimovieContainer = document.querySelectorAll('.movie-detail')[0];
-    var alimovieImg = document.querySelectorAll('.movie-detail img')[0].src;
-    var alimovieFtpLink = 'ftp://10.218.145.15/' + alimovieImg.split('file=')[1];
-    var alimovieFtpLinkSegs = alimovieFtpLink.split('/');
+    const alimovieContainer = document.querySelectorAll('.movie-detail')[0];
+    const alimovieImg = document.querySelectorAll('.movie-detail img')[0].src;
+    let alimovieFtpLink =
+      'ftp://10.218.145.15/' + alimovieImg.split('file=')[1];
+    const alimovieFtpLinkSegs = alimovieFtpLink.split('/');
     alimovieFtpLinkSegs.splice('-1');
     alimovieFtpLink = alimovieFtpLinkSegs.join('/');
-    var alimovieFtpEl = document.createElement('a');
+    const alimovieFtpEl = document.createElement('a');
     alimovieFtpEl.href = alimovieFtpLink;
     alimovieFtpEl.target = '_blank';
     alimovieFtpEl.innerText = 'FTP 下载地址';
@@ -624,9 +656,15 @@ function isNpmSite(hostname) {
       text-align: center;
     `;
     alimovieContainer.prepend(alimovieFtpEl);
-    console.log('%c alimovie ftp link appended, hacked by noscripter', 'color: red; font-size: 2rem;');
-  } else if (hostname.indexOf('www.aliway.com') > -1 || hostname.indexOf('work.alibaba-inc.com') > -1) {
-    var aliwayContent = document.querySelectorAll('.tpc_content');
+    console.log(
+      '%c alimovie ftp link appended, hacked by noscripter',
+      'color: red; font-size: 2rem;'
+    );
+  } else if (
+    hostname.indexOf('www.aliway.com') > -1 ||
+    hostname.indexOf('work.alibaba-inc.com') > -1
+  ) {
+    const aliwayContent = document.querySelectorAll('.tpc_content');
     aliwayContent.forEach(el => {
       el.style = bg;
     });
@@ -637,16 +675,18 @@ function isNpmSite(hostname) {
       el.style = bg;
     });
   } else if (isNpmSite(hostname)) {
-    if (hostname === 'www.npmjs.com') hostname = hostname.replace('www.', '')
-    var alinpmName = location.pathname.split('package')[1];
-    var alinpmRegistry = `http://registry.${hostname}${alinpmName}`;
-    var alinpmRegistryLatest = `http://registry.${hostname}${alinpmName}/latest`;
-    var alinpmRepo = document.querySelectorAll('.pack-repo')[0] || document.getElementById('top');
+    if (hostname === 'www.npmjs.com') hostname = hostname.replace('www.', '');
+    const alinpmName = location.pathname.split('package')[1];
+    const alinpmRegistry = `http://registry.${hostname}${alinpmName}`;
+    const alinpmRegistryLatest = `http://registry.${hostname}${alinpmName}/latest`;
+    const alinpmRepo =
+      document.querySelectorAll('.pack-repo')[0] ||
+      document.getElementById('top');
     if (alinpmRepo) {
-      console.warn('npm registry appending target missing')
+      console.warn('npm registry appending target missing');
     }
-    var aliRegistryLink = document.createElement('a');
-    var aliRegistryLatestLink = document.createElement('a');
+    const aliRegistryLink = document.createElement('a');
+    const aliRegistryLatestLink = document.createElement('a');
     aliRegistryLink.style.color = 'red';
     aliRegistryLink.style['font-weight'] = 'bold';
     aliRegistryLink.style.margin = '0 20px';
@@ -674,16 +714,18 @@ function isNpmSite(hostname) {
       log('delete google.logUrl');
     }
     // remove google redirect
-    log('I\'ll hack google');
-    var links = document.links;
-    for (var i = 0; i < links.length; i++) {
-      var link = links[i];
-      var attrs = [].slice.call(link.attributes);
-      var toRemoveAttrs = [];
+    log("I'll hack google");
+    const links = document.links;
+    for (let i = 0; i < links.length; i++) {
+      const link = links[i];
+      const attrs = [].slice.call(link.attributes);
+      const toRemoveAttrs = [];
       attrs.forEach(attr => {
-        if (attr.name.indexOf('data-') > -1 ||
+        if (
+          attr.name.indexOf('data-') > -1 ||
           attr.name.indexOf('jsaction') > -1 ||
-          attr.name.indexOf('on') > -1) {
+          attr.name.indexOf('on') > -1
+        ) {
           toRemoveAttrs.push(attr.name);
         }
       });
@@ -703,7 +745,7 @@ function isNpmSite(hostname) {
     }
     injectNspLink();
     injectAnimateCss(function() {
-      var s = document.querySelector('#sandboxNspLink');
+      const s = document.querySelector('#sandboxNspLink');
       s.classList.add('animated');
       s.classList.add('infinite');
       s.classList.add('pulse');
@@ -715,21 +757,23 @@ function isNpmSite(hostname) {
       };
     });
   } else if (hostname.indexOf('zhihu.com') > -1) {
-    var links2 = document.querySelectorAll('a');
+    const links2 = document.querySelectorAll('a');
     [].slice.call(links2).forEach(link => {
       if (link.href.indexOf('link.zhihu.com') > -1) {
-        link.setAttribute('href', decodeURIComponent(
-          link.href.split('target=')[1]
-        ));
+        link.setAttribute(
+          'href',
+          decodeURIComponent(link.href.split('target=')[1])
+        );
         log('replace zhihu link:' + link, 'success');
       }
     });
     setInterval(function() {
       log('scan zhihu script');
-      var scripts = document.querySelectorAll('script');
+      let scripts = document.querySelectorAll('script');
       scripts = [].slice.call(scripts);
       scripts.forEach(script => {
-        if (script.src.indexOf('raven') > -1 ||
+        if (
+          script.src.indexOf('raven') > -1 ||
           script.src.indexOf('za-js-sdk') > -1
         ) {
           script.remove();
@@ -741,12 +785,16 @@ function isNpmSite(hostname) {
     [].slice.call(document.querySelectorAll('.click-to-tweet')).forEach(el => {
       el.remove();
     });
-    [].slice.call(document.querySelectorAll('.trace-in-text-cta')).forEach(el => {
-      el.remove();
-    });
-    [].slice.call(document.querySelectorAll('.click-to-tweet-text')).forEach(el => {
-      el.remove();
-    });
+    [].slice
+      .call(document.querySelectorAll('.trace-in-text-cta'))
+      .forEach(el => {
+        el.remove();
+      });
+    [].slice
+      .call(document.querySelectorAll('.click-to-tweet-text'))
+      .forEach(el => {
+        el.remove();
+      });
   } else if (hostname.indexOf('sitepoint') > -1) {
     // close modal
     document.querySelector('.close-reveal-modal').click();
@@ -761,38 +809,36 @@ function isNpmSite(hostname) {
 })();
 
 const scripts = {
-  rxjs: 'https://cdn.bootcss.com/rxjs/5.5.8/Rx.min.js'
+  rxjs: 'https://cdn.bootcss.com/rxjs/5.5.8/Rx.min.js',
 };
 
 function inject(s) {
-  var scr = document.createElement('script');
+  const scr = document.createElement('script');
   scr.src = scripts[s] || s;
   document.head.appendChild(scr);
 }
 
 window.inject = inject;
 
-(function() {
-  if (false) {
-    var OriginTitile = document.title,
-      titleTime;
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        document.title = '死鬼去哪里了！';
-        clearTimeout(titleTime);
-      } else {
-        document.title = '(つェ⊂)咦!又好了!';
-        titleTime = setTimeout(function() {
-          document.title = OriginTitile;
-        }, 2000);
-      }
-    });
-  }
-})();
+function tabTitle() {
+  const OriginTitile = document.title;
+  let titleTime;
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      document.title = '死鬼去哪里了！';
+      clearTimeout(titleTime);
+    } else {
+      document.title = '(つェ⊂)咦!又好了!';
+      titleTime = setTimeout(function() {
+        document.title = OriginTitile;
+      }, 2000);
+    }
+  });
+}
 
 // add style to document
 function addStyle(s) {
-  var el = document.createElement('style');
+  const el = document.createElement('style');
   el.textContent = s;
   el.id = `${parseInt(new Date().getTime(), 32)}`;
   document.head.appendChild(el);
@@ -807,7 +853,7 @@ function isOctoTreeOpen() {
 
 function getOctoTreeWidth() {
   const c = document.querySelector('.octotree_github_sidebar');
-  if (c) return c.getBoundingClientRect().width;;
+  if (c) return c.getBoundingClientRect().width;
   return 0;
 }
 
@@ -818,14 +864,18 @@ function currentDocWidth() {
 
 let githubWideStylId = [];
 
-if (location.hostname.indexOf('github.com') > -1 && location.href !== 'https://github.com' && location.href !=- 'https://github.com/') {
+if (
+  location.hostname.indexOf('github.com') > -1 &&
+  location.href !== 'https://github.com' &&
+  location.href !== -'https://github.com/'
+) {
   // NOTE: opt-in for the new github dashboard style
   dynamicWidthGithub();
   logger(`githubWideStylId: ${githubWideStylId}`);
 }
 
 function makeLinkOpenNew() {
-  var base = document.getElementsByTagName('base');
+  let base = document.getElementsByTagName('base');
   if (base.length === 0) {
     base = document.createElement('base');
     base.setAttribute('target', '_blank');
@@ -840,22 +890,25 @@ function available(el, cb) {
   const id = setInterval(function() {
     if (document.querySelector(el)) {
       clearInterval(id);
-      cb()
+      cb();
     }
-  },1000);
+  }, 1000);
 }
 
 function dynamicWidthGithub() {
-  if (location.href === 'https://github.com/' || location.href === 'https://github.com') return
+  if (
+    location.href === 'https://github.com/' ||
+    location.href === 'https://github.com'
+  ) { return; }
   let s;
   if (document.querySelector('html').classList.contains('octotree-show')) {
-    logger(`octotree-show with styleId: ${githubWideStylId}`)
+    logger(`octotree-show with styleId: ${githubWideStylId}`);
     githubWideStylId.forEach(id => {
       document.getElementById(id).remove();
-    })
-    githubWideStylId = []
+    });
+    githubWideStylId = [];
   } else {
-    logger('octotree-hidden')
+    logger('octotree-hidden');
     githubWideStylId.push(addGithubWidthStyle());
   }
 }
@@ -863,16 +916,18 @@ function dynamicWidthGithub() {
 available('.octotree_sidebar', function() {
   logger('found octotree sidebar');
   dynamicWidthGithub();
-  document.querySelector('.octotree_sidebar').addEventListener('click', function() {
-    logger('.octotree_sidebar clicked');
-    dynamicWidthGithub();
-  });
+  document
+    .querySelector('.octotree_sidebar')
+    .addEventListener('click', function() {
+      logger('.octotree_sidebar clicked');
+      dynamicWidthGithub();
+    });
 });
 
 function addGithubWidthStyle() {
   // https://raw.githubusercontent.com/mdo/github-wide/master/github-wide.css
   // github-wide style
-  var githubWideStyle = `
+  const githubWideStyle = `
     .container {
       width: 100% !important;
       padding-left: 30px !important;
@@ -1004,17 +1059,119 @@ function addGithubWidthStyle() {
 // disturbing ugly character display of chinese character '门'
 // in default Firefox font display
 if (navigator.userAgent.match(/Firefox/)) {
-    addStyle(`
+  addStyle(`
 *,
 body {
-  font-family: "Hei", "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif !important;
+  font-family: "SauceCodePro Font", "Hack Nerd Font", "Helvetica Neue", Arial, "Hei", "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif !important
 }
-`)
+`);
 }
 
 if (location.hostname === 'xkctk.hangzhou.gov.cn') {
   setInterval(() => {
     // stupid constraint
-    validCodeCount = 0
-  }, 1000)
+    /* global validCodeCount */
+    /* eslint-disable no-native-reassign */
+    validCodeCount = 0;
+    /* eslint-enable no-native-reassign */
+  }, 1000);
 }
+
+/**
+ * @param {String} tag -- tag name
+ * @param {String} attr -- attribute name
+ * @param {String} match -- /[*$^]/i
+ *  ref: https://www.w3.org/TR/selectors/#attribute-substrings
+ * @param {String} value -- attribute value
+ * @return {DOMEElement} -- HTML DOM Element
+ */
+function queryByAttr(tag, attr, match, value) {
+  const q = `${tag || '*'}[${attr || 'class'}${match || '*'}="${value}"]`;
+  const els = document.querySelectorAll(q);
+  if (els.length > 0) {
+    logger(`queryByAttr: ${q}`, 'warn');
+  }
+  return els;
+}
+
+function removeAdElements() {
+  const adElements = [
+    {
+      attr: 'class',
+      value: 'ad-widget',
+      match: '^',
+    },
+    {
+      tag: 'iframe',
+      attr: 'src',
+      value: '//pos.baidu.com',
+    },
+    {
+      attr: 'class',
+      value: 'content_r_ad',
+    },
+    {
+      attr: 'class',
+      value: 'sinaad-toolkit-box'
+    },
+    {
+      attr: 'class',
+      value: 'sinaads',
+      match: '*'
+    },
+    {
+      attr: 'class',
+      value: '_ads',
+      match: '*'
+    },
+    {
+      attr: 'class',
+      value: '-ads',
+      match: '*'
+    },
+    {
+      attr: 'class',
+      value: 'ad_',
+      match: '^'
+    },
+    {
+      attr: 'class',
+      value: 'sinaAD',
+      match: '^'
+    },
+    {
+      value: 'zhitou',
+    },
+    {
+      value: 'ad_edu_list'
+    },
+    {
+      value: 'godA',
+    },
+    {
+      value: 'godR',
+    },
+    {
+      value: 'god-cut'
+    },
+    {
+      value: 'god-main'
+    },
+    {
+      value: 'god-column'
+    }
+  ];
+  adElements.forEach(el => {
+    const { tag, attr, match, value } = el;
+    const els = queryByAttr(tag, attr, match, value);
+    if (els.length) els.forEach(el => el.remove());
+  });
+}
+
+removeAdElements();
+fuckAdScript(stupidScripts);
+
+setInterval(function() {
+  removeAdElements();
+  fuckAdScript(stupidScripts);
+}, 3000);
