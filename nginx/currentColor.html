@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>currentColor</title>
+  <style>
+/*||||||||||||||||||||||||||||||||||
+
+Just change this color.             */
+
+html {
+  color: red;
+  animation: color 5s linear infinite;
+}
+
+@keyframes color {
+  50% { color: #0f0; }
+  to { color: #00f; }
+}
+
+/*||||||||||||||||||||||||||||||||||*/
+
+body {
+  font-family: sans-serif;
+  margin: 2em;
+  border-top: 2px solid;
+  position: relative;
+  padding: 1em;
+}
+
+body:before {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: .1;
+  background-color: currentColor;
+  background-image: linear-gradient(to bottom, currentColor, #fff);
+}
+
+p, h1 {
+  color: black;
+  margin-top: 0;
+}
+
+button {
+  color: inherit;
+  display: block;
+  text-decoration: none;
+  padding: .5em 1em;
+  background: white;
+  border: 2px solid;
+  margin: 0 auto;
+  border-radius: .5em;
+  box-shadow: 2px 2px;
+  font-weight: bold;
+}
+  </style>
+</head>
+<body>
+  <h1>Using currentColor for fun and profit</h1>
+  <p>In pure CSS you can use <code>currentColor</code> wherever you migth use a normal color value. This maps to whatever the current value of color is.</p>
+  <p>Go ahead, stick <code>currentColor</code> in gradients and backgrounds. It’s already the default for text, borders, and drop shadows so you don’t even need to define current color there.</p>
+<button>Foobar</button>
+</body>
+</html>
