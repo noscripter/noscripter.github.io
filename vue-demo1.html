@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vue.js Hello world!</title>
+  <script src="/script/vue-first-commit.js"></script>
+</head>
+<body>
+  <div id="app">
+    <table>
+      <thead>
+        <tr>
+          <th v-for="head in header">{{head}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="row in rows">
+          <td v-for="cell of row" :style="{background: cell.background}">{{cell.value}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    window.onload = function() {
+      new Vue({
+        el: '#app',
+        data: {
+          header: ['a', 'b', 'c'],
+          rows: [[
+            {value: 'hoge', background: "hsl(60, 100%, 75%)"},
+            {value: 'fuga', background: "hsl(240, 100%, 75%)"},
+            {value: 'hoge', background: "hsl(60, 100%, 75%)"}
+          ]]
+        }
+      })
+    }
+  </script>
+</body>
+</html>
