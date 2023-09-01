@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hex CSS Color Quick View</title>
+  <style>
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#colors1 {
+  width: 400px;
+  height: 200px;
+  margin: 10px auto;
+}
+
+#wrapper, #inner-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#inner-wrapper {
+  flex-direction: column;
+}
+
+.preview {
+  width: 400px;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  width: 100%;
+  height: 40px;
+}
+  </style>
+</head>
+<body>
+  <h1>Hex CSS Color Quick View</h1>
+  <div id="wrapper">
+    <div id="inner-wrapper">
+    <textarea
+      id="colors1"
+      name=""
+      cols="30"
+      rows="10"
+      placeholder="input hex colors here, split with `,`; for example: #000, #FFF"
+      defaultValue=""
+      onblur="quickview()"
+    ></textarea>
+    <button onclick="test()">show demo</button>
+    </div>
+    <div class="preview" id="preview1"></div>
+  </div>
+  <script>
+    function quickview() {
+      var reg = /#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?/;
+      try {
+        var colors = colors1.value.trim().split(',').map(d =>
+          d.trim()).filter(Boolean);
+        if (colors.length) {
+          preview1.innerHTML = `<ul></ul>`
+          for (let i = 0; i < colors.length; i ++) {
+            var el = document.createElement('li')
+            var color = colors[i];
+            var matches = color.match(reg)
+            if (matches) {
+              color = matches[0]
+              el.style.background = color;
+              el.innerText = color;
+              preview1.children[0].appendChild(el);
+            }
+          }
+        } else {
+          console.log('please input some hex values');
+        }
+      } catch (e) {
+        console.error('something wrong', e);
+      }
+    }
+
+    function test() {
+      colors1.value = `
+			'#f44336',
+			'#e91e63',
+			'#9c27b0',
+			'#673ab7',
+			'#000000',
+			'#2196f3',
+			'#009688',
+			'#1b5e20',
+			'#33691e',
+			'#827717',
+			'#e65100',
+			'#ff5722',
+			'#795548',
+			'#607d8b',
+      `;
+      quickview()
+    }
+  </script>
+</body>
+</html>
