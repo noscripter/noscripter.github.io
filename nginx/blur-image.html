@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>图片模糊</title>
+  <style>
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#wrapper {
+  display: flex;
+  margin: auto;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#container {
+  width: 800px;
+  height: 400px;
+}
+
+canvas {
+  width: 800px;
+  max-width: 800px;
+  height: auto;
+  margin-right: 20px;
+}
+
+button {
+  width: 100px;
+  height 48px;
+  border-radius: 5px;
+  border: none;
+  background: lightblue;
+  padding: 5px 10px;
+  text-align: center;
+  color: #FFF;
+  cursor: pointer;
+}
+
+input, button {
+  display: block;
+  margin: 10px 0;
+}
+
+canvas {
+  background: #CCC;
+  border: 1px solid #CDCDCD;
+  border-radius: 5px;
+  width: 800px;
+}
+
+button:hover {
+  background: blue;
+}
+
+#opacity-settings {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <canvas id="canvas"></canvas>
+    <div id="container">
+      <input type="file" id="imageInput" accept="image/*">
+      <div id="opacity-settings">
+        <span>模糊度：</span>
+        <input id="opacity1" type="number" value=2 min="1" max="100">
+      </div>
+      <button id="blurButton">模糊图片</button>
+    </div>
+  </div>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const blurButton = document.getElementById('blurButton');
+
+    let imageLoaded = false;
+
+    // 监听图片上传事件
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+            imageLoaded = true;
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 监听模糊按钮点击事件
+    blurButton.addEventListener('click', () => {
+      if (imageLoaded) {
+        const blurRadius = opacity1.value; // 调整模糊半径
+        ctx.filter = `blur(${blurRadius}px)`;
+        ctx.drawImage(canvas, 0, 0);
+        ctx.filter = 'none';
+      } else {
+        alert('请先选择一张图片');
+      }
+    });
+  </script>
+</body>
+</html>
